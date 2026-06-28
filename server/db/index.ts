@@ -65,6 +65,26 @@ function seedWorkflowTemplates(db:DatabaseSync,adminId:string){
  insertIgnore(db,"INSERT OR IGNORE INTO workflow_runs (id,workflow_id,client_id,company_id,status,current_step_id,completed_steps,remaining_steps,elapsed_minutes,ai_actions,human_actions,started_by,completed_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)",["run_client_onboarding","wf_client_onboarding","cl_ethan","co_northline","completed","end",5,0,126,JSON.stringify(["Emma Clarke AI produced onboarding summary"]),JSON.stringify(["Consultant approved onboarding checklist"]),adminId]);
  insertIgnore(db,"INSERT OR IGNORE INTO workflow_audit_logs (id,workflow_id,run_id,user_id,action,old_value,new_value,notes) VALUES (?,?,?,?,?,?,?,?)",["wal_1","wf_license_renewal","run_license_renewal",adminId,"started workflow","draft","running","Seeded active renewal workflow"]);
 }
+function upsertBootstrapUser(db:DatabaseSync){
+ const bootstrapPassword=process.env.MORIFAR_BOOTSTRAP_PASSWORD;
+ if(!bootstrapPassword||bootstrapPassword.length<12)return;
+ const salt=crypto.randomUUID();
+ const email=process.env.MORIFAR_BOOTSTRAP_EMAIL??"admin@morifar.local";
+ const name=process.env.MORIFAR_BOOTSTRAP_NAME??"Morifar Administrator";
+ const passwordHash=`${salt}:${hashPassword(bootstrapPassword,salt)}`;
+ db.prepare(`
+  INSERT INTO users (id,name,email,password_hash,role_id,department_id,avatar,status)
+  VALUES (?,?,?,?,?,?,?,'active')
+  ON CONFLICT(id) DO UPDATE SET
+   name=excluded.name,
+   email=excluded.email,
+   password_hash=excluded.password_hash,
+   role_id=excluded.role_id,
+   department_id=excluded.department_id,
+   avatar=excluded.avatar,
+   status='active'
+ `).run("usr_admin",name,email,passwordHash,"role_super_admin","dept_executive","MA");
+}
 function seedOperations(db:DatabaseSync){
  const admin=db.prepare("SELECT id FROM users ORDER BY created_at LIMIT 1").get() as {id:string}|undefined;if(!admin)return;
  const companies=[["co_qanara","Qanara Consulting","United Arab Emirates","Professional Services","CN-88421","2026-08-14","active"],["co_azm","Azm Technologies","Saudi Arabia","Technology","CR-101923","2026-07-21","formation"],["co_northline","Northline Group","Canada","Distribution","CA-77810","2026-11-02","active"]];
@@ -90,8 +110,7 @@ function seed(db:DatabaseSync){
  roles.forEach(name=>insertIgnore(db,"INSERT OR IGNORE INTO roles (id,name,permissions) VALUES (?,?,?)",[`role_${name.toLowerCase().replaceAll(" ","_")}`,name,JSON.stringify(name==="Super Admin"?["*"]:["dashboard:read","crm:read","tasks:read"])]));
  const departments=[["executive","Executive Office"],["formation","Company Formation"],["advisory","International Advisory"],["sales","Sales & Growth"],["finance","Finance"],["legal","Legal & Compliance"],["people","People & Culture"]];
  departments.forEach(([key,name])=>insertIgnore(db,"INSERT OR IGNORE INTO departments (id,name,description) VALUES (?,?,?)",[`dept_${key}`,name,`${name} operations`]));
- const bootstrapPassword=process.env.MORIFAR_BOOTSTRAP_PASSWORD;
- if(bootstrapPassword&&bootstrapPassword.length>=12){const salt=crypto.randomUUID();insertIgnore(db,"INSERT OR IGNORE INTO users (id,name,email,password_hash,role_id,department_id,avatar) VALUES (?,?,?,?,?,?,?)",["usr_admin",process.env.MORIFAR_BOOTSTRAP_NAME??"Morifar Administrator",process.env.MORIFAR_BOOTSTRAP_EMAIL??"admin@morifar.local",`${salt}:${hashPassword(bootstrapPassword,salt)}`,"role_super_admin","dept_executive","MA"])}
+ upsertBootstrapUser(db);
  const ais=[
  ["sarah","Sarah Al-Harbi AI","formation","Formation Intelligence Lead","Saudi Company Formation",["MISA licensing","Saudi regulations","Entity structuring"],["CRM","Tasks","Documents"]],
  ["aisha","Aisha Al-Mansoori AI","formation","UAE Market Entry Lead","UAE Company Formation",["Mainland setup","Free zones","Corporate tax"],["CRM","Tasks","Documents"]],
