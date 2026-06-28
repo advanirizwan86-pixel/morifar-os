@@ -44,6 +44,7 @@ The protected route guard itself worked correctly, but dashboard loading, authen
    - Impact: ChatGPT or any external reviewer cannot inspect the running app beyond the login gate.
    - Root cause found in code: bootstrap user seeding used `INSERT OR IGNORE`, so an existing `usr_admin` row did not update when Vercel environment credentials changed.
    - Fix applied: bootstrap user now upserts the configured email/password/name and reactivates the account.
+   - Post-fix deployment retry: the app served a newer Vercel deployment, but the reviewer login still returned `Email or password is incorrect`. This indicates the Vercel environment variables are not currently set to the supplied reviewer credentials, or the deployment did not receive those values.
 
 ### Non-critical
 
@@ -110,6 +111,8 @@ Screenshots:
    - `MORIFAR_BOOTSTRAP_EMAIL=reviewer@morifar.local`
    - `MORIFAR_BOOTSTRAP_PASSWORD=<temporary reviewer password>`
 3. Retest login and authenticated dashboard access.
+
+Current status after push: redeploy was observed, but reviewer login still fails. The next required action is to update/verify the Vercel environment variables and redeploy once more.
 
 ### P1
 
