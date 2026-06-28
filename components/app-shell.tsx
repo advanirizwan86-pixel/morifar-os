@@ -4,6 +4,7 @@ import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {
   IconBell,
+  IconBriefcase2,
   IconBuildingSkyscraper,
   IconChecklist,
   IconChevronDown,
@@ -25,6 +26,12 @@ import type {SessionUser} from "@/features/auth/types";
 
 const nav = [
   {href: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard},
+  {href: "/business-operations", label: "Operations", icon: IconBriefcase2},
+  {href: "/company-formation", label: "Formation", icon: IconBuildingSkyscraper},
+  {href: "/client-onboarding", label: "Onboarding", icon: IconUsersGroup},
+  {href: "/documents", label: "Documents", icon: IconChecklist},
+  {href: "/approvals", label: "Approvals", icon: IconGitBranch},
+  {href: "/department-queues", label: "Queues", icon: IconCommand},
   {href: "/crm", label: "CRM", icon: IconBuildingSkyscraper},
   {href: "/leads", label: "Leads", icon: IconUsersGroup},
   {href: "/tasks", label: "Tasks", icon: IconChecklist},
