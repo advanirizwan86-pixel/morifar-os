@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function ForgotPasswordPage(){return <div className="auth-simple"><div className="auth-card"><div className="auth-logo">M</div><p className="eyebrow">ACCOUNT RECOVERY</p><h1>Reset your password</h1><p>Contact your Morifar administrator to verify your identity and issue a secure reset link.</p><a className="gold-button" href="mailto:it@morifar.com">Contact IT support</a><Link href="/login">Return to sign in</Link></div></div>}
