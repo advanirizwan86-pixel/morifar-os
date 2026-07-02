@@ -120,15 +120,17 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
 
   return (
     <div className="shell">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
         <div className="brand">
           <span className="brand-mark">M</span>
           <div><strong>MORIFAR</strong><small>OS</small></div>
         </div>
+        <div className="release-pill" aria-label="Morifar OS Version 1.0 Release Candidate">v1.0 RC</div>
         <button className="mobile-close" onClick={() => setOpen(false)} aria-label="Close menu">
           <IconX size={20} />
         </button>
-        <nav>
+        <nav aria-label="Primary navigation">
           {navGroups.map(group => {
             const visibleItems = group.items.filter(item => !item.executiveOnly || canSeeExecutive);
             if (!visibleItems.length) return null;
@@ -143,6 +145,8 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
                       href={item.href}
                       onClick={() => setOpen(false)}
                       className={active ? "active" : ""}
+                      aria-current={active ? "page" : undefined}
+                      title={item.label}
                     >
                       <item.icon size={19} stroke={1.7} />
                       <span>{item.label}</span>
@@ -172,7 +176,7 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
           <button className="menu-button" onClick={() => setOpen(true)} aria-label="Open menu">
             <IconMenu2 size={22} />
           </button>
-          <form className="global-search" onSubmit={searchSubmit}>
+          <form className="global-search" onSubmit={searchSubmit} role="search" aria-label="Global search">
             <IconSearch size={18} />
             <input ref={search} aria-label="Global search" placeholder="Search clients, tasks, companies, AI..." />
             <kbd><IconCommand size={11} /> K</kbd>
@@ -191,7 +195,7 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
             </div>
           </div>
         </header>
-        <main>{children}</main>
+        <main id="main-content" tabIndex={-1}>{children}</main>
       </div>
     </div>
   );

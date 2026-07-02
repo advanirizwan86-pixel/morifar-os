@@ -2,6 +2,9 @@
 
 Morifar OS is a Next.js operating platform for CRM, tasks, company operations, AI workforce management, and human/AI workflow orchestration.
 
+**Version:** 1.0.0 Release Candidate  
+**Status:** Internal daily operations candidate
+
 ## Current Scope
 
 - Phase 1 and Phase 2 operational modules
@@ -10,6 +13,8 @@ Morifar OS is a Next.js operating platform for CRM, tasks, company operations, A
 - Phase 4.1 enterprise stabilization and production readiness
 - Phase 5 Morifar Intelligence Layer
 - Phase 5.1 release hardening and production readiness visibility
+- Phase 6 Service Automation Platform
+- Version 1.0 Release Candidate polish, accessibility, navigation, and release documentation
 
 External API execution, production background workers, durable cloud persistence, department automation packs, and the Client Portal remain future work.
 
@@ -169,6 +174,9 @@ Internal release visibility is available at `/system-status` for executive roles
 
 ## Documentation
 
+- `CHANGELOG.md`
+- `RELEASE_NOTES.md`
+- `SYSTEM_STATUS.md`
 - `PHASE_3_SPRINT_3_1.md`
 - `PHASE_4_WORKFLOW_ENGINE.md`
 - `PHASE_5_INTELLIGENCE_LAYER.md`

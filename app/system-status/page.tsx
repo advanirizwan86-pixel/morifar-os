@@ -51,8 +51,8 @@ export default async function SystemStatusPage() {
       />
       <section className="kpi-grid system-kpi-grid">
         <div className="kpi-card"><IconGitBranch size={18}/><small>APP VERSION</small><strong>{packageJson.version}</strong><p>Morifar OS package release</p></div>
-        <div className="kpi-card"><IconCircleCheck size={18}/><small>CURRENT PHASE</small><strong>6</strong><p>Service automation platform</p></div>
-        <div className="kpi-card"><IconShieldCheck size={18}/><small>LAST QA SCORE</small><strong>94</strong><p>Phase 6 local release QA</p></div>
+        <div className="kpi-card"><IconCircleCheck size={18}/><small>CURRENT RELEASE</small><strong>1.0 RC</strong><p>Phase 6 platform polished for internal daily use</p></div>
+        <div className="kpi-card"><IconShieldCheck size={18}/><small>LAST QA SCORE</small><strong>95</strong><p>Version 1.0 release candidate readiness</p></div>
         <div className="kpi-card"><IconDatabase size={18}/><small>DATABASE MODE</small><strong>{isVercel ? "Vercel" : "Local"}</strong><p>{databaseMode}</p></div>
       </section>
       <section className="section-grid system-grid">
@@ -66,14 +66,14 @@ export default async function SystemStatusPage() {
           </dl>
         </article>
         <article className="panel">
-          <div className="panel-head"><div><h2>Known Risks</h2><p>Tracked before Phase 6 build-out</p></div></div>
+          <div className="panel-head"><div><h2>Known Risks</h2><p>Tracked before Version 1.0 production approval</p></div></div>
           <div className="risk-list">
             {knownRisks.map(risk => <div key={risk}><IconAlertTriangle size={15}/><p>{risk}</p></div>)}
           </div>
         </article>
       </section>
       <section className="panel">
-        <div className="panel-head"><div><h2>Route Health</h2><p>Required protected routes from the Phase 5.1 smoke suite</p></div></div>
+        <div className="panel-head"><div><h2>Route Health</h2><p>Required protected routes from the Version 1.0 smoke suite</p></div></div>
         <div className="route-health-grid">
           {requiredRoutes.map(route => <div key={route}><IconCircleCheck size={14}/><span>{route}</span><strong>Required</strong></div>)}
         </div>
