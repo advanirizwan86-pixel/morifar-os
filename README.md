@@ -9,6 +9,7 @@ Morifar OS is a Next.js operating platform for CRM, tasks, company operations, A
 - Phase 4 Workflow Engine
 - Phase 4.1 enterprise stabilization and production readiness
 - Phase 5 Morifar Intelligence Layer
+- Phase 5.1 release hardening and production readiness visibility
 
 External API execution, production background workers, durable cloud persistence, department automation packs, and the Client Portal remain future work.
 
@@ -78,12 +79,13 @@ The current `lint` script runs the strict TypeScript compiler. An ESLint configu
 - `/knowledge-base` - internal SOPs, procedures, checklists, policies, and templates
 - `/notifications` - operational notifications
 - `/settings` - company, department, role, and market settings
+- `/system-status` - internal release, deployment, route health, and QA status page
 
 ## Authentication
 
 - A bootstrap Super Admin is created only when `MORIFAR_BOOTSTRAP_PASSWORD` is present and contains at least 12 characters.
 - `AUTH_SECRET` must contain at least 32 characters.
-- `/settings`, `/ai-command-center`, and `/workflow-engine` are restricted to `Super Admin`, `CEO`, and `COO`.
+- `/settings`, `/system-status`, `/ai-command-center`, `/workflow-engine`, `/executive-copilot`, and `/operations-intelligence` are restricted to `Super Admin`, `CEO`, and `COO`.
 - Real environment files, local databases, logs, and runtime output are excluded from Git.
 
 ## Data Model
@@ -120,11 +122,36 @@ Vercel function storage is ephemeral. The `/tmp` SQLite database allows the appl
 
 Before using Morifar OS for durable production data, replace the local SQLite repository with a managed database such as Vercel Postgres, Neon, Supabase, or another persistent SQL service.
 
+### SQLite Warning
+
+The current adapter uses Node's built-in `node:sqlite` module. Node may emit `ExperimentalWarning: SQLite is an experimental feature and might change at any time` during build or runtime. This is documented as a known risk for Phase 5.1 and should be removed by migrating to durable managed storage before live client data is used.
+
+## Release QA
+
+Run strict TypeScript and the production build before deployment:
+
+```bash
+pnpm typecheck
+pnpm build
+```
+
+Authenticated route smoke tests require review credentials through environment variables:
+
+```powershell
+$env:MORIFAR_BASE_URL="https://morifar-os.vercel.app"
+$env:MORIFAR_REVIEW_EMAIL="<review email>"
+$env:MORIFAR_REVIEW_PASSWORD="<review password>"
+pnpm smoke:routes
+```
+
+Internal release visibility is available at `/system-status` for executive roles.
+
 ## Documentation
 
 - `PHASE_3_SPRINT_3_1.md`
 - `PHASE_4_WORKFLOW_ENGINE.md`
 - `PHASE_5_INTELLIGENCE_LAYER.md`
+- `PHASE_5_1_RELEASE_HARDENING.md`
 - `ROUTE_AUDIT.md`
 - `DATABASE_MIGRATION_PLAN.md`
 - `PRODUCTION_READINESS.md`

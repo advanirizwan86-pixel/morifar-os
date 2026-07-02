@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "smoke:routes": "node scripts/route-smoke.mjs"
   },
   "dependencies": {
     "@tabler/icons-react": "^3.34.1",

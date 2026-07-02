@@ -18,6 +18,7 @@ import {
   IconMenu2,
   IconRobot,
   IconSearch,
+  IconServer,
   IconSettings,
   IconUsersGroup,
   IconUserScan,
@@ -75,7 +76,10 @@ const navGroups = [
   },
   {
     label: "Administration",
-    items: [{href: "/settings", label: "Settings", icon: IconSettings}],
+    items: [
+      {href: "/system-status", label: "System Status", icon: IconServer, executiveOnly: true},
+      {href: "/settings", label: "Settings", icon: IconSettings, executiveOnly: true},
+    ],
   },
 ];
 
@@ -83,7 +87,8 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [userMenu, setUserMenu] = useState(false);
+  const [sidebarUserMenu, setSidebarUserMenu] = useState(false);
+  const [topUserMenu, setTopUserMenu] = useState(false);
   const search = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -91,6 +96,11 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         search.current?.focus();
+      }
+      if (event.key === "Escape") {
+        setSidebarUserMenu(false);
+        setTopUserMenu(false);
+        setOpen(false);
       }
     };
     window.addEventListener("keydown", handler);
@@ -143,14 +153,14 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
           })}
         </nav>
         <div className="sidebar-foot-wrap">
-          <button className="sidebar-foot" onClick={() => setUserMenu(value => !value)} aria-label="Open user menu">
+          <button className="sidebar-foot" onClick={() => setSidebarUserMenu(value => !value)} aria-label="Open user menu" aria-expanded={sidebarUserMenu}>
             <div className="mini-avatar">{user.avatar}</div>
             <div><strong>{user.name}</strong><small>{user.role}</small></div>
             <IconChevronDown size={16} />
           </button>
-          {userMenu && (
+          {sidebarUserMenu && (
             <form action={logout} className="user-popover">
-              <button><IconLogout size={16} />Sign out</button>
+              <button aria-label="Sign out of Morifar OS"><IconLogout size={16} />Sign out</button>
             </form>
           )}
         </div>
@@ -170,7 +180,14 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
             <Link href="/notifications" aria-label="Notifications" className="notification-button">
               <IconBell size={19} /><i />
             </Link>
-            <button className="top-avatar" onClick={() => setUserMenu(value => !value)} aria-label="Open user menu">{user.avatar}</button>
+            <div className="top-user-wrap">
+              <button className="top-avatar" onClick={() => setTopUserMenu(value => !value)} aria-label="Open user menu" aria-expanded={topUserMenu}>{user.avatar}</button>
+              {topUserMenu && (
+                <form action={logout} className="user-popover top-user-popover">
+                  <button aria-label="Sign out of Morifar OS"><IconLogout size={16} />Sign out</button>
+                </form>
+              )}
+            </div>
           </div>
         </header>
         <main>{children}</main>
