@@ -37,7 +37,7 @@ export async function createCompanyApplication(_:BusinessActionState,form:FormDa
  getDb().prepare("INSERT INTO workflow_runs (id,workflow_id,client_id,company_id,status,current_step_id,completed_steps,remaining_steps,elapsed_minutes,ai_actions,human_actions,started_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
   .run(newId("run"),"wf_company_formation",client,company,"running","intake",1,4,0,JSON.stringify([]),JSON.stringify(["Application created"]),user.id);
  getDb().prepare("INSERT INTO department_queue_items (id,department_id,entity_type,entity_id,title,priority,status,assigned_user_id,assigned_ai_id,due_date) VALUES (?,?,?,?,?,?,?,?,?,?)")
-  .run(newId("queue"),"dept_formation","company_application",id,`Formation application ${values.jurisdiction}`,String(form.get("priority")??"medium"),"open",consultant,ai,new Date(Date.now()+86400000*3).toISOString());
+  .run(newId("queue"),"dept_company_formation","company_application",id,`Formation application ${values.jurisdiction}`,String(form.get("priority")??"medium"),"open",consultant,ai,new Date(Date.now()+86400000*3).toISOString());
  audit(user.id,"company_application",id,"created","lead","application_started","Company formation application opened");
  revalidatePath("/company-formation");
  revalidatePath("/department-queues");
@@ -104,7 +104,7 @@ export async function decideApproval(form:FormData){
  getDb().prepare("UPDATE approvals SET status=?,decision_notes=?,assigned_to=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").run(decision,notes,user.id,id);
  audit(user.id,"approval",id,"approval_decision",row.status,decision,notes||"Approval decision recorded");
  if(row.entity_type==="company_application"&&decision==="approved"){
-  getDb().prepare("INSERT INTO department_queue_items (id,department_id,entity_type,entity_id,title,priority,status,assigned_user_id,due_date) VALUES (?,?,?,?,?,?,?,?,?)").run(newId("queue"),"dept_formation",row.entity_type,row.entity_id,"Continue approved formation step","high","open",user.id,new Date(Date.now()+86400000).toISOString());
+  getDb().prepare("INSERT INTO department_queue_items (id,department_id,entity_type,entity_id,title,priority,status,assigned_user_id,due_date) VALUES (?,?,?,?,?,?,?,?,?)").run(newId("queue"),"dept_company_formation",row.entity_type,row.entity_id,"Continue approved formation step","high","open",user.id,new Date(Date.now()+86400000).toISOString());
  }
  revalidatePath("/approvals");
  revalidatePath("/department-queues");

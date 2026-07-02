@@ -58,20 +58,20 @@ function workflowDefinition(kind:string){
 }
 function seedWorkflowTemplates(db:DatabaseSync,adminId:string){
  const templates=[
-  ["wf_company_formation","Company Formation","Entity setup from enquiry to licence pack","dept_formation","United Arab Emirates","high"],
-  ["wf_golden_visa","Golden Visa","Golden Visa assessment, documentation and review","dept_legal","United Arab Emirates","high"],
-  ["wf_investor_visa","Investor Visa","Investor visa application orchestration","dept_legal","United Arab Emirates","medium"],
-  ["wf_dependent_visa","Dependent Visa","Dependent visa document and approval workflow","dept_legal","United Arab Emirates","medium"],
-  ["wf_corporate_bank","Corporate Bank Account","Corporate banking readiness and KYC workflow","dept_finance","United Arab Emirates","high"],
-  ["wf_personal_bank","Personal Bank Account","Personal banking onboarding and KYC workflow","dept_finance","United Arab Emirates","medium"],
-  ["wf_accounting_setup","Accounting Setup","Accounting system and chart-of-accounts setup","dept_finance","United Arab Emirates","medium"],
-  ["wf_corporate_tax","Corporate Tax Registration","Corporate tax registration workflow","dept_finance","United Arab Emirates","high"],
-  ["wf_vat_registration","VAT Registration","VAT registration readiness and filing workflow","dept_finance","United Arab Emirates","medium"],
+  ["wf_company_formation","Company Formation","Entity setup from enquiry to licence pack","dept_company_formation","United Arab Emirates","high"],
+  ["wf_golden_visa","Golden Visa","Golden Visa assessment, documentation and review","dept_visa","United Arab Emirates","high"],
+  ["wf_investor_visa","Investor Visa","Investor visa application orchestration","dept_visa","United Arab Emirates","medium"],
+  ["wf_dependent_visa","Dependent Visa","Dependent visa document and approval workflow","dept_visa","United Arab Emirates","medium"],
+  ["wf_corporate_bank","Corporate Bank Account","Corporate banking readiness and KYC workflow","dept_banking","United Arab Emirates","high"],
+  ["wf_personal_bank","Personal Bank Account","Personal banking onboarding and KYC workflow","dept_banking","United Arab Emirates","medium"],
+  ["wf_accounting_setup","Accounting Setup","Accounting system and chart-of-accounts setup","dept_accounting","United Arab Emirates","medium"],
+  ["wf_corporate_tax","Corporate Tax Registration","Corporate tax registration workflow","dept_tax","United Arab Emirates","high"],
+  ["wf_vat_registration","VAT Registration","VAT registration readiness and filing workflow","dept_tax","United Arab Emirates","medium"],
   ["wf_trademark","Trademark Registration","Trademark search, filing and follow-up workflow","dept_legal","United Arab Emirates","medium"],
   ["wf_contract_drafting","Contract Drafting","Legal drafting, review and approval workflow","dept_legal","United Arab Emirates","high"],
   ["wf_client_onboarding","Client Onboarding","Client onboarding and internal handoff workflow","dept_sales","United Arab Emirates","medium"],
   ["wf_document_collection","Document Collection","Document request and completion workflow","dept_sales","United Arab Emirates","medium"],
-  ["wf_license_renewal","License Renewal","Licence renewal monitoring and execution workflow","dept_formation","United Arab Emirates","high"]
+  ["wf_license_renewal","License Renewal","Licence renewal monitoring and execution workflow","dept_company_formation","United Arab Emirates","high"]
  ];
  templates.forEach(t=>insertIgnore(db,"INSERT OR IGNORE INTO workflows (id,name,description,department_id,country,priority,trigger_type,definition,status,active,created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?)",[t[0],t[1],t[2],t[3],t[4],t[5],"manual",workflowDefinition(String(t[1]).toLowerCase().replaceAll(" ","_")),"active",1,adminId]));
  insertIgnore(db,"INSERT OR IGNORE INTO workflow_runs (id,workflow_id,client_id,company_id,status,current_step_id,completed_steps,remaining_steps,elapsed_minutes,ai_actions,human_actions,started_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",["run_license_renewal","wf_license_renewal","cl_nadia","co_qanara","running","approval",3,2,84,JSON.stringify(["Aisha Al-Mansoori AI reviewed licence activity list"]),JSON.stringify(["Operations validated trade licence renewal pack"]),adminId]);
@@ -91,7 +91,7 @@ function seedBusinessOperations(db:DatabaseSync,adminId:string){
  approvals.forEach(row=>insertIgnore(db,"INSERT OR IGNORE INTO approvals (id,entity_type,entity_id,title,status,requested_by,assigned_to,ai_professional_id,priority,reason) VALUES (?,?,?,?,?,?,?,?,?,?)",row));
  const audits=[["aud_1","user",adminId,"company_application","app_azm","status_changed","trade_name","initial_approval","Initial approval submitted"],["aud_2","ai","ai_sarah","document","docreq_5","document_rejected","pending","rejected","Bank statement expired"],["aud_3","user",adminId,"workflow_run","run_license_renewal","workflow_event","approval_pending","approved","Manager approved workflow step"]];
  audits.forEach(row=>insertIgnore(db,"INSERT OR IGNORE INTO audit_logs (id,actor_type,actor_id,entity_type,entity_id,action,before_value,after_value,reason) VALUES (?,?,?,?,?,?,?,?,?)",row));
- const queues=[["q_formation_1","dept_formation","company_application","app_azm","Azm initial approval follow-up","urgent","open",adminId,"ai_sarah",1],["q_formation_2","dept_formation","company_application","app_qanara","Qanara trade name options","high","open",adminId,"ai_aisha",2],["q_sales_1","dept_sales","client","cl_ethan","Client onboarding completion","medium","open",adminId,"ai_emma",3],["q_legal_1","dept_legal","approval","appr_1","Replacement bank statement review","high","open",adminId,"ai_sarah",1],["q_executive_1","dept_executive","workflow_run","run_license_renewal","Workflow monitor exception review","medium","in_progress",adminId,"ai_amir",4]];
+ const queues=[["q_formation_1","dept_company_formation","company_application","app_azm","Azm initial approval follow-up","urgent","open",adminId,"ai_sarah",1],["q_formation_2","dept_company_formation","company_application","app_qanara","Qanara trade name options","high","open",adminId,"ai_aisha",2],["q_sales_1","dept_sales","client","cl_ethan","Client onboarding completion","medium","open",adminId,"ai_emma",3],["q_legal_1","dept_legal","approval","appr_1","Replacement bank statement review","high","open",adminId,"ai_sarah",1],["q_executive_1","dept_executive","workflow_run","run_license_renewal","Workflow monitor exception review","medium","in_progress",adminId,"ai_amir",4]];
  queues.forEach(row=>insertIgnore(db,"INSERT OR IGNORE INTO department_queue_items (id,department_id,entity_type,entity_id,title,priority,status,assigned_user_id,assigned_ai_id,due_date) VALUES (?,?,?,?,?,?,?,?,?,?)",[row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],new Date(Date.now()+Number(row[9])*86400000).toISOString()]));
  insertIgnore(db,"INSERT OR IGNORE INTO activities (id,actor_type,actor_id,action,entity_type,entity_id,metadata) VALUES (?,?,?,?,?,?,?)",["act_ops_1","user",adminId,"changed formation status","company_application","app_azm",JSON.stringify({from:"trade_name",to:"initial_approval"})]);
 }
@@ -139,16 +139,28 @@ function seedOperations(db:DatabaseSync){
 function seed(db:DatabaseSync){
  const roles=["Super Admin","CEO","COO","Manager","Consultant","Sales","Finance","Legal","HR"];
  roles.forEach(name=>insertIgnore(db,"INSERT OR IGNORE INTO roles (id,name,permissions) VALUES (?,?,?)",[`role_${name.toLowerCase().replaceAll(" ","_")}`,name,JSON.stringify(name==="Super Admin"?["*"]:["dashboard:read","crm:read","tasks:read"])]));
- const departments=[["executive","Executive Office"],["formation","Company Formation"],["advisory","International Advisory"],["sales","Sales & Growth"],["finance","Finance"],["legal","Legal & Compliance"],["people","People & Culture"]];
- departments.forEach(([key,name])=>insertIgnore(db,"INSERT OR IGNORE INTO departments (id,name,description) VALUES (?,?,?)",[`dept_${key}`,name,`${name} operations`]));
+ const departments=[
+  ["sales","Sales Department"],
+  ["operations","Operations Department"],
+  ["company_formation","Company Formation Department"],
+  ["visa","Visa Department"],
+  ["banking","Banking Department"],
+  ["accounting","Accounting Department"],
+  ["tax","Tax Department"],
+  ["compliance","Compliance Department"],
+  ["legal","Legal Department"],
+  ["private_client","Private Client Department"],
+  ["executive","Executive Office"]
+ ];
+ departments.forEach(([key,name])=>db.prepare("INSERT INTO departments (id,name,description) VALUES (?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,description=excluded.description").run(`dept_${key}`,name,`${name} operations`));
  upsertBootstrapUser(db);
  const ais=[
- ["sarah","Sarah Al-Harbi AI","formation","Formation Intelligence Lead","Saudi Company Formation",["MISA licensing","Saudi regulations","Entity structuring"],["CRM","Tasks","Documents"]],
- ["aisha","Aisha Al-Mansoori AI","formation","UAE Market Entry Lead","UAE Company Formation",["Mainland setup","Free zones","Corporate tax"],["CRM","Tasks","Documents"]],
- ["david","David Morgan AI","advisory","UK Expansion Advisor","UK Expansion",["UK market entry","Tax residency","Commercial strategy"],["CRM","Research","Documents"]],
- ["emma","Emma Clarke AI","advisory","Canada Business Advisor","Canada Business",["Federal incorporation","Provincial compliance","Immigration"],["CRM","Research","Documents"]],
- ["arjun","Arjun Mehta AI","advisory","India Advisory Lead","India Advisory",["FDI policy","Market entry","Taxation"],["CRM","Research","Tasks"]],
- ["grace","Grace AI","executive","Private Client Director","Private Client Experience",["Concierge service","Family offices","Client experience"],["CRM","Calendar","Documents"]],
+ ["sarah","Sarah Al-Harbi AI","company_formation","Formation Intelligence Lead","Saudi Company Formation",["MISA licensing","Saudi regulations","Entity structuring"],["CRM","Tasks","Documents"]],
+ ["aisha","Aisha Al-Mansoori AI","company_formation","UAE Market Entry Lead","UAE Company Formation",["Mainland setup","Free zones","Corporate tax"],["CRM","Tasks","Documents"]],
+ ["david","David Morgan AI","operations","UK Expansion Advisor","UK Expansion",["UK market entry","Tax residency","Commercial strategy"],["CRM","Research","Documents"]],
+ ["emma","Emma Clarke AI","private_client","Canada Business Advisor","Canada Business",["Federal incorporation","Provincial compliance","Immigration"],["CRM","Research","Documents"]],
+ ["arjun","Arjun Mehta AI","tax","India Advisory Lead","India Advisory",["FDI policy","Market entry","Taxation"],["CRM","Research","Tasks"]],
+ ["grace","Grace AI","private_client","Private Client Director","Private Client Experience",["Concierge service","Family offices","Client experience"],["CRM","Calendar","Documents"]],
  ["amir","Amir AI","executive","General Manager Assistant","GM Assistant",["Executive operations","Reporting","Coordination"],["CRM","Tasks","Calendar","Documents"]]
  ] as const;
  ais.forEach((a,i)=>insertIgnore(db,"INSERT OR IGNORE INTO ai_professionals (id,name,avatar,department_id,job_title,specialisation,knowledge,system_prompt,skills,tools,status,performance,last_activity,current_workload) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",[`ai_${a[0]}`,a[1],a[1].split(" ").map(x=>x[0]).join("").slice(0,2),`dept_${a[2]}`,a[3],a[4],JSON.stringify(a[5]),`Act as Morifar's ${a[3]}. Provide precise, compliant and commercially useful support.`,JSON.stringify(a[5]),JSON.stringify(a[6]),i===2?"busy":"available",92-i,new Date(Date.now()-i*2400000).toISOString(),i+2]));

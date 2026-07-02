@@ -93,6 +93,20 @@ The current `lint` script runs the strict TypeScript compiler. An ESLint configu
 
 The SQLite schema and seed logic live under `server/db`.
 
+Canonical departments:
+
+- Sales Department
+- Operations Department
+- Company Formation Department
+- Visa Department
+- Banking Department
+- Accounting Department
+- Tax Department
+- Compliance Department
+- Legal Department
+- Private Client Department
+- Executive Office
+
 Primary operational tables include:
 
 - `users`, `roles`, and `departments`

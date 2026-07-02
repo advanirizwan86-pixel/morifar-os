@@ -243,6 +243,6 @@ export function businessFormOptions(){
   clients:(db.prepare("SELECT id,name,email FROM clients ORDER BY name").all() as {id:string;name:string;email:string}[]).map(clientOption),
   users:(db.prepare("SELECT id,name FROM users WHERE status='active' ORDER BY name").all() as {id:string;name:string}[]).map(option),
   ai:(db.prepare("SELECT id,name FROM ai_professionals ORDER BY name").all() as {id:string;name:string}[]).map(option),
-  departments:(db.prepare("SELECT id,name FROM departments WHERE id IN ('dept_formation','dept_executive','dept_sales','dept_legal') ORDER BY name").all() as {id:string;name:string}[]).map(option),
+  departments:(db.prepare("SELECT id,name FROM departments WHERE id IN ('dept_sales','dept_operations','dept_company_formation','dept_visa','dept_banking','dept_accounting','dept_tax','dept_compliance','dept_legal','dept_private_client','dept_executive') ORDER BY name").all() as {id:string;name:string}[]).map(option),
  };
 }

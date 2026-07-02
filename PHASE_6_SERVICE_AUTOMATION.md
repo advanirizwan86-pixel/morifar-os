@@ -33,6 +33,22 @@ The implementation builds on the existing repositories and data model instead of
 - AI Explanations: every recommendation includes a `why` field.
 - Configuration: rules are isolated in `serviceAutomationRules` for future country/service/regulation packs.
 
+## Canonical Department Structure
+
+Morifar OS uses this department model for queues, workflows, AI assignment and future service packs:
+
+- Sales Department
+- Operations Department
+- Company Formation Department
+- Visa Department
+- Banking Department
+- Accounting Department
+- Tax Department
+- Compliance Department
+- Legal Department
+- Private Client Department
+- Executive Office
+
 ## Data Flow
 
 1. Existing repositories load applications, documents, approvals and timeline events.
