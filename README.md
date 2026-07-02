@@ -66,6 +66,7 @@ The current `lint` script runs the strict TypeScript compiler. An ESLint configu
 ## Key Routes
 
 - `/dashboard` - executive operational dashboard
+- `/service-automation` - Phase 6 AI-assisted service execution workspace
 - `/crm` - client, company, and pipeline views
 - `/leads` - lead management
 - `/tasks` - operational task board
@@ -142,6 +143,12 @@ $env:MORIFAR_BASE_URL="https://morifar-os.vercel.app"
 $env:MORIFAR_REVIEW_EMAIL="<review email>"
 $env:MORIFAR_REVIEW_PASSWORD="<review password>"
 pnpm smoke:routes
+```
+
+Phase 6 service automation checks use the same review credentials:
+
+```powershell
+pnpm test:service-automation
 ```
 
 Internal release visibility is available at `/system-status` for executive roles.

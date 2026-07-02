@@ -4,6 +4,7 @@ const password = process.env.MORIFAR_REVIEW_PASSWORD;
 
 const routes = [
   "/dashboard",
+  "/service-automation",
   "/crm",
   "/leads",
   "/leads/new",

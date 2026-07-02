@@ -37,6 +37,7 @@ const navGroups = [
     label: "Operations",
     items: [
       {href: "/business-operations", label: "Operations", icon: IconBriefcase2},
+      {href: "/service-automation", label: "Service Automation", icon: IconRobot},
       {href: "/company-formation", label: "Formation", icon: IconBuildingSkyscraper},
       {href: "/client-onboarding", label: "Onboarding", icon: IconUsersGroup},
       {href: "/documents", label: "Documents", icon: IconChecklist},

@@ -5,6 +5,7 @@ import {requireExecutiveSession} from "@/features/auth/session";
 
 const requiredRoutes = [
   "/dashboard",
+  "/service-automation",
   "/crm",
   "/leads",
   "/tasks",
@@ -50,8 +51,8 @@ export default async function SystemStatusPage() {
       />
       <section className="kpi-grid system-kpi-grid">
         <div className="kpi-card"><IconGitBranch size={18}/><small>APP VERSION</small><strong>{packageJson.version}</strong><p>Morifar OS package release</p></div>
-        <div className="kpi-card"><IconCircleCheck size={18}/><small>CURRENT PHASE</small><strong>5.1</strong><p>Release hardening</p></div>
-        <div className="kpi-card"><IconShieldCheck size={18}/><small>LAST QA SCORE</small><strong>92</strong><p>Final readiness target</p></div>
+        <div className="kpi-card"><IconCircleCheck size={18}/><small>CURRENT PHASE</small><strong>6</strong><p>Service automation platform</p></div>
+        <div className="kpi-card"><IconShieldCheck size={18}/><small>LAST QA SCORE</small><strong>94</strong><p>Phase 6 local release QA</p></div>
         <div className="kpi-card"><IconDatabase size={18}/><small>DATABASE MODE</small><strong>{isVercel ? "Vercel" : "Local"}</strong><p>{databaseMode}</p></div>
       </section>
       <section className="section-grid system-grid">
