@@ -4,8 +4,11 @@ import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {
   IconBell,
+  IconBook,
+  IconBrain,
   IconBriefcase2,
   IconBuildingSkyscraper,
+  IconChartBar,
   IconChecklist,
   IconChevronDown,
   IconCommand,
@@ -24,21 +27,56 @@ import {useEffect, useRef, useState} from "react";
 import {logout} from "@/features/auth/actions";
 import type {SessionUser} from "@/features/auth/types";
 
-const nav = [
-  {href: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard},
-  {href: "/business-operations", label: "Operations", icon: IconBriefcase2},
-  {href: "/company-formation", label: "Formation", icon: IconBuildingSkyscraper},
-  {href: "/client-onboarding", label: "Onboarding", icon: IconUsersGroup},
-  {href: "/documents", label: "Documents", icon: IconChecklist},
-  {href: "/approvals", label: "Approvals", icon: IconGitBranch},
-  {href: "/department-queues", label: "Queues", icon: IconCommand},
-  {href: "/crm", label: "CRM", icon: IconBuildingSkyscraper},
-  {href: "/leads", label: "Leads", icon: IconUsersGroup},
-  {href: "/tasks", label: "Tasks", icon: IconChecklist},
-  {href: "/ai-command-center", label: "AI Command Center", icon: IconRobot, executiveOnly: true},
-  {href: "/workflow-engine", label: "Workflow Engine", icon: IconGitBranch, executiveOnly: true},
-  {href: "/ai-professionals", label: "AI Workforce", icon: IconUserScan},
-  {href: "/settings", label: "Settings", icon: IconSettings},
+const navGroups = [
+  {
+    label: "Dashboard",
+    items: [{href: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard}],
+  },
+  {
+    label: "Operations",
+    items: [
+      {href: "/business-operations", label: "Operations", icon: IconBriefcase2},
+      {href: "/company-formation", label: "Formation", icon: IconBuildingSkyscraper},
+      {href: "/client-onboarding", label: "Onboarding", icon: IconUsersGroup},
+      {href: "/documents", label: "Documents", icon: IconChecklist},
+      {href: "/approvals", label: "Approvals", icon: IconGitBranch},
+      {href: "/department-queues", label: "Queues", icon: IconCommand},
+    ],
+  },
+  {
+    label: "CRM",
+    items: [
+      {href: "/crm", label: "CRM", icon: IconBuildingSkyscraper},
+      {href: "/leads", label: "Leads", icon: IconUsersGroup},
+      {href: "/tasks", label: "Tasks", icon: IconChecklist},
+    ],
+  },
+  {
+    label: "AI Workforce",
+    items: [
+      {href: "/ai-command-center", label: "AI Command Center", icon: IconRobot, executiveOnly: true},
+      {href: "/ai-professionals", label: "AI Workforce", icon: IconUserScan},
+    ],
+  },
+  {
+    label: "Automation",
+    items: [
+      {href: "/workflow-engine", label: "Workflow Engine", icon: IconGitBranch, executiveOnly: true},
+      {href: "/executive-copilot", label: "Executive Copilot", icon: IconBrain, executiveOnly: true},
+      {href: "/operations-intelligence", label: "Operations Intelligence", icon: IconChartBar, executiveOnly: true},
+    ],
+  },
+  {
+    label: "Intelligence",
+    items: [
+      {href: "/client-intelligence", label: "Client Intelligence", icon: IconBrain},
+      {href: "/knowledge-base", label: "Knowledge Base", icon: IconBook},
+    ],
+  },
+  {
+    label: "Administration",
+    items: [{href: "/settings", label: "Settings", icon: IconSettings}],
+  },
 ];
 
 export function AppShell({children, user}: {children: React.ReactNode; user: SessionUser | null}) {
@@ -61,9 +99,7 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
 
   if (!user || pathname === "/login" || pathname === "/forgot-password") return <>{children}</>;
 
-  const visibleNav = nav.filter(item =>
-    !item.executiveOnly || ["Super Admin", "CEO", "COO"].includes(user.role),
-  );
+  const canSeeExecutive = ["Super Admin", "CEO", "COO"].includes(user.role);
 
   function searchSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -82,24 +118,32 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
           <IconX size={20} />
         </button>
         <nav>
-          <p className="nav-label">OPERATIONS</p>
-          {visibleNav.map(item => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          {navGroups.map(group => {
+            const visibleItems = group.items.filter(item => !item.executiveOnly || canSeeExecutive);
+            if (!visibleItems.length) return null;
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={active ? "active" : ""}
-              >
-                <item.icon size={19} stroke={1.7} />
-                <span>{item.label}</span>
-              </Link>
+              <div className="nav-group" key={group.label}>
+                <p className="nav-label">{group.label}</p>
+                {visibleItems.map(item => {
+                  const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={active ? "active" : ""}
+                    >
+                      <item.icon size={19} stroke={1.7} />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
             );
           })}
         </nav>
         <div className="sidebar-foot-wrap">
-          <button className="sidebar-foot" onClick={() => setUserMenu(value => !value)}>
+          <button className="sidebar-foot" onClick={() => setUserMenu(value => !value)} aria-label="Open user menu">
             <div className="mini-avatar">{user.avatar}</div>
             <div><strong>{user.name}</strong><small>{user.role}</small></div>
             <IconChevronDown size={16} />
@@ -126,7 +170,7 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
             <Link href="/notifications" aria-label="Notifications" className="notification-button">
               <IconBell size={19} /><i />
             </Link>
-            <button className="top-avatar" onClick={() => setUserMenu(value => !value)}>{user.avatar}</button>
+            <button className="top-avatar" onClick={() => setUserMenu(value => !value)} aria-label="Open user menu">{user.avatar}</button>
           </div>
         </header>
         <main>{children}</main>

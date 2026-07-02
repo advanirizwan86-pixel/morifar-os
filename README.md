@@ -7,6 +7,8 @@ Morifar OS is a Next.js operating platform for CRM, tasks, company operations, A
 - Phase 1 and Phase 2 operational modules
 - Phase 3 AI Command Center
 - Phase 4 Workflow Engine
+- Phase 4.1 enterprise stabilization and production readiness
+- Phase 5 Morifar Intelligence Layer
 
 External API execution, production background workers, durable cloud persistence, department automation packs, and the Client Portal remain future work.
 
@@ -70,6 +72,10 @@ The current `lint` script runs the strict TypeScript compiler. An ESLint configu
 - `/ai-professionals/[id]` - AI professional workspace
 - `/ai-command-center` - AI workforce control room
 - `/workflow-engine` - workflow builder, execution monitor, approvals, and audit log
+- `/executive-copilot` - AI-labelled conversational executive decision support
+- `/client-intelligence` - client health, blockers, briefings, and next actions
+- `/operations-intelligence` - workload, bottleneck, delay, productivity, and health dashboard
+- `/knowledge-base` - internal SOPs, procedures, checklists, policies, and templates
 - `/notifications` - operational notifications
 - `/settings` - company, department, role, and market settings
 
@@ -118,6 +124,10 @@ Before using Morifar OS for durable production data, replace the local SQLite re
 
 - `PHASE_3_SPRINT_3_1.md`
 - `PHASE_4_WORKFLOW_ENGINE.md`
+- `PHASE_5_INTELLIGENCE_LAYER.md`
+- `ROUTE_AUDIT.md`
+- `DATABASE_MIGRATION_PLAN.md`
+- `PRODUCTION_READINESS.md`
 
 ## Security
 

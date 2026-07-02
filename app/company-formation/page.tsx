@@ -25,7 +25,7 @@ export default async function CompanyFormationPage({searchParams}:{searchParams:
       <div><dt>VISAS</dt><dd>{app.visa_allocation}</dd></div>
       <div><dt>OFFICE</dt><dd>{app.office_requirement}</dd></div>
      </dl>
-     <form action={transitionFormationStatus} className="ops-inline-form"><input type="hidden" name="id" value={app.id}/><select name="next" defaultValue={app.current_status}>{formationStatuses.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}</select><input name="notes" placeholder="Transition note"/><button><IconChecks size={14}/>Log transition</button></form>
+     <form action={transitionFormationStatus} className="ops-inline-form"><input type="hidden" name="id" value={app.id}/><select name="next" defaultValue={app.current_status} aria-label={`Next status for ${app.company_name}`}>{formationStatuses.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}</select><input name="notes" placeholder="Transition note" aria-label={`Transition note for ${app.company_name}`}/><button aria-label={`Log transition for ${app.company_name}`}><IconChecks size={14}/>Log transition</button></form>
      <footer><Link href={`/company-formation/${app.id}`}>Open file <IconArrowUpRight size={14}/></Link><span><IconFileDescription size={14}/>{JSON.parse(app.required_documents).length} required docs</span></footer>
     </article>)}</section>
     {apps.length===0&&<div className="empty-state"><IconBuildingSkyscraper/><strong>No applications</strong><p>No formation applications match this filter.</p></div>}

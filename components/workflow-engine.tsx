@@ -244,14 +244,14 @@ export function WorkflowEngine({data, notice, error}: {data: WorkflowEngineData;
 function WorkflowFilters({data}: {data: WorkflowEngineData}) {
   return (
     <form className="workflow-filters">
-      <label className="workflow-search"><IconSearch size={16} /><input name="q" defaultValue={data.filters.q ?? ""} placeholder="Search client, company, department, workflow, AI or human" /></label>
-      <select name="status" defaultValue={data.filters.status ?? "all"}><option value="all">All statuses</option>{statuses.map(status => <option key={status}>{status}</option>)}</select>
-      <select name="department" defaultValue={data.filters.department ?? "all"}><option value="all">All departments</option>{data.departments.map(item => <option value={item.name} key={item.id}>{item.name}</option>)}</select>
-      <select name="country" defaultValue={data.filters.country ?? "all"}><option value="all">All countries</option>{data.countries.map(item => <option key={item}>{item}</option>)}</select>
-      <select name="priority" defaultValue={data.filters.priority ?? "all"}><option value="all">All priorities</option>{priorities.map(item => <option key={item}>{item}</option>)}</select>
+      <label className="workflow-search"><IconSearch size={16} /><input name="q" defaultValue={data.filters.q ?? ""} placeholder="Search client, company, department, workflow, AI or human" aria-label="Search workflows" /></label>
+      <select name="status" defaultValue={data.filters.status ?? "all"} aria-label="Workflow status filter"><option value="all">All statuses</option>{statuses.map(status => <option key={status}>{status}</option>)}</select>
+      <select name="department" defaultValue={data.filters.department ?? "all"} aria-label="Workflow department filter"><option value="all">All departments</option>{data.departments.map(item => <option value={item.name} key={item.id}>{item.name}</option>)}</select>
+      <select name="country" defaultValue={data.filters.country ?? "all"} aria-label="Workflow country filter"><option value="all">All countries</option>{data.countries.map(item => <option key={item}>{item}</option>)}</select>
+      <select name="priority" defaultValue={data.filters.priority ?? "all"} aria-label="Workflow priority filter"><option value="all">All priorities</option>{priorities.map(item => <option key={item}>{item}</option>)}</select>
       <input name="date" type="date" aria-label="Date filter" defaultValue={data.filters.date ?? ""} />
-      <select name="ai" defaultValue={data.filters.ai ?? "all"}><option value="all">All AI professionals</option>{data.aiProfessionals.map(item => <option value={item.name} key={item.id}>{item.name}</option>)}</select>
-      <select name="human" defaultValue={data.filters.human ?? "all"}><option value="all">All human users</option>{data.humans.map(item => <option value={item.name} key={item.id}>{item.name}</option>)}</select>
+      <select name="ai" defaultValue={data.filters.ai ?? "all"} aria-label="Assigned AI filter"><option value="all">All AI professionals</option>{data.aiProfessionals.map(item => <option value={item.name} key={item.id}>{item.name}</option>)}</select>
+      <select name="human" defaultValue={data.filters.human ?? "all"} aria-label="Assigned human filter"><option value="all">All human users</option>{data.humans.map(item => <option value={item.name} key={item.id}>{item.name}</option>)}</select>
       <button><IconSearch size={15} />Filter</button>
     </form>
   );
@@ -301,11 +301,11 @@ function LiveMonitor({runs, data}: {runs: WorkflowEngineData["runs"]; data: Work
           {run.currentStepType === "Approval" && ["running", "paused"].includes(run.status) && (
             <form action={approvalAction} className="approval-actions">
               <input type="hidden" name="runId" value={run.id} />
-              <button name="decision" value="approve"><IconCheck size={13} />Approve</button>
-              <button name="decision" value="reject"><IconX size={13} />Reject</button>
-              <button name="decision" value="more_info"><IconClock size={13} />More info</button>
-              <button name="decision" value="reassign"><IconGitBranch size={13} />Reassign</button>
-              <button name="decision" value="escalate"><IconShieldCheck size={13} />Escalate</button>
+              <button name="decision" value="approve" aria-label={`Approve ${run.workflowName}`}><IconCheck size={13} />Approve</button>
+              <button name="decision" value="reject" aria-label={`Reject ${run.workflowName}`}><IconX size={13} />Reject</button>
+              <button name="decision" value="more_info" aria-label={`Request more information for ${run.workflowName}`}><IconClock size={13} />More info</button>
+              <button name="decision" value="reassign" aria-label={`Reassign ${run.workflowName}`}><IconGitBranch size={13} />Reassign</button>
+              <button name="decision" value="escalate" aria-label={`Escalate ${run.workflowName}`}><IconShieldCheck size={13} />Escalate</button>
             </form>
           )}
         </article>
@@ -314,8 +314,8 @@ function LiveMonitor({runs, data}: {runs: WorkflowEngineData["runs"]; data: Work
       {data.clients.length > 0 && data.selectedWorkflow && (
         <form action={startWorkflow} className="workflow-run-form">
           <input type="hidden" name="workflowId" value={data.selectedWorkflow.id} />
-          <select name="clientId"><option value="">Internal client</option>{data.clients.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
-          <select name="companyId"><option value="">Morifar company</option>{data.companies.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
+          <select name="clientId" aria-label="Workflow run client"><option value="">Internal client</option>{data.clients.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
+          <select name="companyId" aria-label="Workflow run company"><option value="">Morifar company</option>{data.companies.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
           <button className="gold-button"><IconPlayerPlay size={15} />Start selected workflow</button>
         </form>
       )}

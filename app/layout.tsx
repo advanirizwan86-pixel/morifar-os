@@ -8,6 +8,7 @@ import "./ai-command-center.css";
 import "./workflow-engine.css";
 import "./workflow-engine-filters.css";
 import "./business-operations.css";
+import "./intelligence.css";
 
 export const metadata: Metadata = {
   title: "Morifar One",

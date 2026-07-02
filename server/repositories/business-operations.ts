@@ -236,11 +236,13 @@ export function listDepartmentQueueItems(filter:{department?:string;status?:stri
 
 export function businessFormOptions(){
  const db=getDb();
+ const option=(item:{id:string;name:string})=>({id:item.id,name:item.name});
+ const clientOption=(item:{id:string;name:string;email:string})=>({id:item.id,name:item.name,email:item.email});
  return {
-  companies:db.prepare("SELECT id,name FROM companies ORDER BY name").all() as {id:string;name:string}[],
-  clients:db.prepare("SELECT id,name,email FROM clients ORDER BY name").all() as {id:string;name:string;email:string}[],
-  users:db.prepare("SELECT id,name FROM users WHERE status='active' ORDER BY name").all() as {id:string;name:string}[],
-  ai:db.prepare("SELECT id,name FROM ai_professionals ORDER BY name").all() as {id:string;name:string}[],
-  departments:db.prepare("SELECT id,name FROM departments WHERE id IN ('dept_formation','dept_executive','dept_sales','dept_legal') ORDER BY name").all() as {id:string;name:string}[],
+  companies:(db.prepare("SELECT id,name FROM companies ORDER BY name").all() as {id:string;name:string}[]).map(option),
+  clients:(db.prepare("SELECT id,name,email FROM clients ORDER BY name").all() as {id:string;name:string;email:string}[]).map(clientOption),
+  users:(db.prepare("SELECT id,name FROM users WHERE status='active' ORDER BY name").all() as {id:string;name:string}[]).map(option),
+  ai:(db.prepare("SELECT id,name FROM ai_professionals ORDER BY name").all() as {id:string;name:string}[]).map(option),
+  departments:(db.prepare("SELECT id,name FROM departments WHERE id IN ('dept_formation','dept_executive','dept_sales','dept_legal') ORDER BY name").all() as {id:string;name:string}[]).map(option),
  };
 }
