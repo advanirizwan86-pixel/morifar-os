@@ -8,6 +8,7 @@ Morifar OS Version 1.0 RC packages the completed Phase 1 through Phase 6 platfor
 - AI Professionals, AI Command Center, Workflow Engine, Executive Copilot, Client Intelligence, Operations Intelligence, and Knowledge Base.
 - Phase 6 Service Automation workspace with AI-assisted operational review, document validation, generation support, compliance checks, and activity timeline.
 - System Status page for version, environment, route health, database mode, auth status, known risks, and QA score visibility.
+- Company Profile / Organization Settings for Version 1.0 operational rollout.
 
 ## Release Candidate Polish
 

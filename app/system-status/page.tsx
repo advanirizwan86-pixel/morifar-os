@@ -21,6 +21,7 @@ const requiredRoutes = [
   "/operations-intelligence",
   "/knowledge-base",
   "/settings",
+  "/settings/company-profile",
   "/system-status",
 ];
 

@@ -22,6 +22,7 @@ const routes = [
   "/operations-intelligence",
   "/knowledge-base",
   "/settings",
+  "/settings/company-profile",
   "/system-status",
   "/search?q=azm",
   "/notifications",

@@ -11,6 +11,7 @@
 - Tightened shared focus, disabled, selection, table header, mobile input, and card interaction styling.
 - Updated `/system-status` to reflect Version 1.0 Release Candidate readiness and a QA score of 95.
 - Added release documentation: `VERSION`, `SYSTEM_STATUS.md`, and `RELEASE_NOTES.md`.
+- Added Company Profile / Organization Settings for Version 1.0 operational rollout.
 
 ### Known Risks
 

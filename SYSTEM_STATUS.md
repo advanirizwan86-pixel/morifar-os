@@ -12,6 +12,7 @@
 
 - Required authenticated routes are tracked on `/system-status`.
 - Authentication, logout, role-gated executive routes, service automation, workflow, intelligence, and core operations routes are included in the smoke-test path.
+- Company Profile / Organization Settings is available at `/settings/company-profile` for the Version 1.0 operational rollout.
 - The app is ready for internal daily-use release-candidate validation.
 
 ## Deployment
