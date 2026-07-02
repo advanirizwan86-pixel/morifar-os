@@ -8,10 +8,12 @@ Policy: No new product features; only release hardening, visibility, QA, and cri
 
 - TypeScript strict validation.
 - Next.js production build.
+- Local built-server route smoke test on port 3001.
+- Production route smoke test against `https://morifar-os.vercel.app`.
 - Required route inventory, including Phase 5 Intelligence Layer pages.
 - Authentication protection for executive and protected routes.
-- Logout flow in the application shell.
-- Desktop, tablet, and mobile responsive risks for the shell and new system status page.
+- Logout flow in the application shell through browser UI on the built app.
+- Desktop, tablet, and mobile responsive checks for the shell, Intelligence Layer, Workflow Engine, and new system status page.
 - Accessibility labels and focus-state coverage in navigation, search, user menu, and status controls.
 - Deployment/version visibility requirements.
 - SQLite runtime warning behavior.
@@ -34,14 +36,15 @@ Policy: No new product features; only release hardening, visibility, QA, and cri
 ## Console And Network Error Status
 
 - Local TypeScript and production build passed.
-- No production crash pages were observed in the previous post-deploy route QA.
-- Browser console and network logs must be re-captured after the Phase 5.1 commit is deployed.
+- Local browser QA on the built app found no console `error` or `warn` entries on tested pages.
+- Production route smoke found no broken required routes and no production crash pages.
+- Production browser navigation through the in-app browser timed out during console capture; production console logs should still be re-captured manually in Vercel/browser devtools after this deployment.
 - The SQLite `ExperimentalWarning` is known and documented. It comes from Node's `node:sqlite` API.
 
 ## Remaining Risks
 
 - The app still uses SQLite storage that is not a durable production database strategy for live client data on Vercel.
-- Browser console/network QA needs to be repeated after the Phase 5.1 deployment is live.
+- Production browser console capture needs a manual follow-up because automated production navigation timed out, although HTTP/network route smoke passed.
 - Multi-role access testing remains limited until more seeded reviewer roles are available.
 - Build time depends on deployment environment variables unless Vercel injects a build timestamp.
 
@@ -53,9 +56,9 @@ The score improves from 84 because the deployed Phase 5 routes are now available
 
 ## Go / No-Go Recommendation For Phase 6
 
-**Go, after Phase 5.1 deployment verification.**
+**Go for Phase 6 planning.**
 
-Morifar OS is ready to proceed to Phase 6 planning once this hardening commit is deployed and the final production browser pass confirms:
+Morifar OS is ready to proceed to Phase 6 planning. The Phase 5.1 deployment is live and production route smoke passes. Before active Phase 6 feature construction, perform one manual production browser console review to close the only remaining observation gap.
 
 - No required routes are broken.
 - No production crash pages are present.
@@ -63,4 +66,3 @@ Morifar OS is ready to proceed to Phase 6 planning once this hardening commit is
 - Desktop, tablet, and mobile layouts remain usable.
 - Browser console and network errors are documented.
 - `/system-status` is available to executive users.
-
