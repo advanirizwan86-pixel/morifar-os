@@ -23,6 +23,7 @@ const requiredRoutes = [
   "/settings",
   "/settings/company-profile",
   "/system-status",
+  "/cto",
   "/cto-start",
   "/cto-walkthrough",
   "/system-map",

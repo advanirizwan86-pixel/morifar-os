@@ -13,6 +13,7 @@
 - Added release documentation: `VERSION`, `SYSTEM_STATUS.md`, and `RELEASE_NOTES.md`.
 - Added Company Profile / Organization Settings for Version 1.0 operational rollout.
 - Added CTO Access Pack routes, documentation pack, training mode, system map, CTO walkthrough, and Super Admin demo-data reset tooling.
+- Added CTO Mode enterprise engineering console at `/cto` for architecture, routes, services, database, AI, QA, documentation, health, search and briefing visibility.
 
 ### Known Risks
 

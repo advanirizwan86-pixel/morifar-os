@@ -35,6 +35,7 @@ type NavItem = {
   icon: typeof IconLayoutDashboard;
   executiveOnly?: boolean;
   ctoOnly?: boolean;
+  ownerOnly?: boolean;
 };
 
 const navGroups: {label: string; items: NavItem[]}[] = [
@@ -88,6 +89,7 @@ const navGroups: {label: string; items: NavItem[]}[] = [
     label: "Administration",
     items: [
       {href: "/system-status", label: "System Status", icon: IconServer, executiveOnly: true},
+      {href: "/cto", label: "CTO Mode", icon: IconMap, ownerOnly: true},
       {href: "/cto-start", label: "CTO Start", icon: IconMap, ctoOnly: true},
       {href: "/settings", label: "Settings", icon: IconSettings, executiveOnly: true},
     ],
@@ -128,6 +130,7 @@ export function AppShell({children, demoDataCount, user}: {children: React.React
 
   const canSeeExecutive = ["Super Admin", "CEO", "COO", "CTO Reviewer"].includes(user.role);
   const canSeeCto = ["Super Admin", "CEO", "CTO Reviewer"].includes(user.role);
+  const canSeeOwner = ["Super Admin", "CEO"].includes(user.role);
 
   function searchSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -149,7 +152,7 @@ export function AppShell({children, demoDataCount, user}: {children: React.React
         </button>
         <nav aria-label="Primary navigation">
           {navGroups.map(group => {
-            const visibleItems = group.items.filter(item => (!item.executiveOnly || canSeeExecutive) && (!item.ctoOnly || canSeeCto));
+            const visibleItems = group.items.filter(item => (!item.executiveOnly || canSeeExecutive) && (!item.ctoOnly || canSeeCto) && (!item.ownerOnly || canSeeOwner));
             if (!visibleItems.length) return null;
             return (
               <div className="nav-group" key={group.label}>

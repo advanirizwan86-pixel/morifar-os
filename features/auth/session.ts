@@ -8,6 +8,7 @@ export async function getSession(){return verifyToken((await cookies()).get(SESS
 export async function requireSession(){const user=await getSession();if(!user)redirect("/login");return user}
 export async function requireExecutiveSession(){const user=await requireSession();if(!["Super Admin","CEO","COO","CTO Reviewer"].includes(user.role))redirect("/dashboard?denied=1");return user}
 export async function requireCtoSession(){const user=await requireSession();if(!["Super Admin","CEO","CTO Reviewer"].includes(user.role))redirect("/dashboard?denied=1");return user}
+export async function requireCtoOwnerSession(){const user=await requireSession();if(!["Super Admin","CEO"].includes(user.role))redirect("/dashboard?denied=1");return user}
 export async function requireSuperAdminSession(){const user=await requireSession();if(user.role!=="Super Admin")redirect("/dashboard?denied=1");return user}
 export async function setSession(user:SessionUser){(await cookies()).set(SESSION_COOKIE,await createToken(user),{httpOnly:true,sameSite:"lax",secure:process.env.NODE_ENV==="production",path:"/",maxAge:28800})}
 export async function clearSession(){(await cookies()).delete(SESSION_COOKIE)}

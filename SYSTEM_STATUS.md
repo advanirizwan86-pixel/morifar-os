@@ -14,6 +14,7 @@
 - Authentication, logout, role-gated executive routes, service automation, workflow, intelligence, and core operations routes are included in the smoke-test path.
 - Company Profile / Organization Settings is available at `/settings/company-profile` for the Version 1.0 operational rollout.
 - CTO Access Pack is available through `/cto-start`, `/cto-walkthrough`, `/system-map`, `/training`, and `/admin/data-reset`.
+- CTO Mode engineering console is available at `/cto` for CEO and Super Admin.
 - The app is ready for internal daily-use release-candidate validation.
 
 ## Deployment
