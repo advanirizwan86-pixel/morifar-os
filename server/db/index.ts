@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { pbkdf2Sync, timingSafeEqual } from "node:crypto";
 import { tmpdir } from "node:os";
+import { defaultCompanyProfile } from "@/features/settings/company-profile";
 
 const globalDb=globalThis as unknown as {morifarDb?:DatabaseSync};
 const defaultDbPath=process.env.VERCEL?join(tmpdir(),"morifar.db"):join(process.cwd(),"data","morifar.db");
@@ -137,7 +138,7 @@ function seedOperations(db:DatabaseSync){
 }
 
 function seed(db:DatabaseSync){
- const roles=["Super Admin","CEO","COO","Manager","Consultant","Sales","Finance","Legal","HR"];
+ const roles=["Super Admin","CEO","COO","CTO Reviewer","Manager","Consultant","Sales","Finance","Legal","HR"];
  roles.forEach(name=>insertIgnore(db,"INSERT OR IGNORE INTO roles (id,name,permissions) VALUES (?,?,?)",[`role_${name.toLowerCase().replaceAll(" ","_")}`,name,JSON.stringify(name==="Super Admin"?["*"]:["dashboard:read","crm:read","tasks:read"])]));
  const departments=[
   ["sales","Sales Department"],
@@ -167,6 +168,7 @@ function seed(db:DatabaseSync){
  seedOperations(db);
  [["AE","United Arab Emirates","AED","English / Arabic"],["SA","Saudi Arabia","SAR","Arabic / English"],["GB","United Kingdom","GBP","English"],["CA","Canada","CAD","English / French"],["IN","India","INR","English / Hindi"]].forEach(c=>insertIgnore(db,"INSERT OR IGNORE INTO countries (code,name,currency,language) VALUES (?,?,?,?)",c));
  insertIgnore(db,"INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)",["company",JSON.stringify({name:"Morifar Group",timezone:"Asia/Dubai",currency:"AED",language:"English"})]);
+ insertIgnore(db,"INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)",["company_profile",JSON.stringify(defaultCompanyProfile)]);
 }
 export function getDb(){if(!globalDb.morifarDb){mkdirSync(dirname(dbPath),{recursive:true});const db=new DatabaseSync(dbPath);db.exec(readFileSync(join(process.cwd(),"server","db","schema.sql"),"utf8"));migrate(db);seed(db);globalDb.morifarDb=db}return globalDb.morifarDb}
 export function verifyPassword(password:string,stored:string){const [salt,expected]=stored.split(":");if(!salt||!expected)return false;const actual=hashPassword(password,salt);return actual.length===expected.length&&timingSafeEqual(Buffer.from(actual),Buffer.from(expected))}

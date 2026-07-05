@@ -23,6 +23,11 @@ const requiredRoutes = [
   "/settings",
   "/settings/company-profile",
   "/system-status",
+  "/cto-start",
+  "/cto-walkthrough",
+  "/system-map",
+  "/admin/data-reset",
+  "/training",
 ];
 
 function releaseValue(value: string | undefined, fallback = "Not provided") {

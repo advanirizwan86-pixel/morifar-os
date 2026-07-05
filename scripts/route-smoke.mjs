@@ -24,6 +24,11 @@ const routes = [
   "/settings",
   "/settings/company-profile",
   "/system-status",
+  "/cto-start",
+  "/cto-walkthrough",
+  "/system-map",
+  "/admin/data-reset",
+  "/training",
   "/search?q=azm",
   "/notifications",
 ];
@@ -79,7 +84,7 @@ for (const route of routes) {
   console.log(`${ok ? "PASS" : "FAIL"} ${response.status} ${String(Date.now() - started).padStart(4)}ms ${route} ${heading}`);
 }
 
-for (const route of ["/dashboard", "/executive-copilot", "/system-status"]) {
+for (const route of ["/dashboard", "/executive-copilot", "/system-status", "/cto-start", "/admin/data-reset"]) {
   const response = await fetch(`${baseUrl}${route}`, {redirect: "manual"});
   const location = response.headers.get("location") ?? "";
   const ok = response.status === 307 && location.includes("/login");

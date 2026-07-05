@@ -12,6 +12,7 @@
 - Updated `/system-status` to reflect Version 1.0 Release Candidate readiness and a QA score of 95.
 - Added release documentation: `VERSION`, `SYSTEM_STATUS.md`, and `RELEASE_NOTES.md`.
 - Added Company Profile / Organization Settings for Version 1.0 operational rollout.
+- Added CTO Access Pack routes, documentation pack, training mode, system map, CTO walkthrough, and Super Admin demo-data reset tooling.
 
 ### Known Risks
 

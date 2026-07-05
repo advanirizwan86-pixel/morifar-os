@@ -12,6 +12,7 @@ import {
   IconChecklist,
   IconChevronDown,
   IconCommand,
+  IconMap,
   IconGitBranch,
   IconLayoutDashboard,
   IconLogout,
@@ -28,7 +29,15 @@ import {useEffect, useRef, useState} from "react";
 import {logout} from "@/features/auth/actions";
 import type {SessionUser} from "@/features/auth/types";
 
-const navGroups = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: typeof IconLayoutDashboard;
+  executiveOnly?: boolean;
+  ctoOnly?: boolean;
+};
+
+const navGroups: {label: string; items: NavItem[]}[] = [
   {
     label: "Dashboard",
     items: [{href: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard}],
@@ -79,12 +88,19 @@ const navGroups = [
     label: "Administration",
     items: [
       {href: "/system-status", label: "System Status", icon: IconServer, executiveOnly: true},
+      {href: "/cto-start", label: "CTO Start", icon: IconMap, ctoOnly: true},
       {href: "/settings", label: "Settings", icon: IconSettings, executiveOnly: true},
+    ],
+  },
+  {
+    label: "Training",
+    items: [
+      {href: "/training", label: "Training", icon: IconBook},
     ],
   },
 ];
 
-export function AppShell({children, user}: {children: React.ReactNode; user: SessionUser | null}) {
+export function AppShell({children, demoDataCount, user}: {children: React.ReactNode; demoDataCount?: number; user: SessionUser | null}) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -110,7 +126,8 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
 
   if (!user || pathname === "/login" || pathname === "/forgot-password") return <>{children}</>;
 
-  const canSeeExecutive = ["Super Admin", "CEO", "COO"].includes(user.role);
+  const canSeeExecutive = ["Super Admin", "CEO", "COO", "CTO Reviewer"].includes(user.role);
+  const canSeeCto = ["Super Admin", "CEO", "CTO Reviewer"].includes(user.role);
 
   function searchSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -132,7 +149,7 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
         </button>
         <nav aria-label="Primary navigation">
           {navGroups.map(group => {
-            const visibleItems = group.items.filter(item => !item.executiveOnly || canSeeExecutive);
+            const visibleItems = group.items.filter(item => (!item.executiveOnly || canSeeExecutive) && (!item.ctoOnly || canSeeCto));
             if (!visibleItems.length) return null;
             return (
               <div className="nav-group" key={group.label}>
@@ -195,6 +212,13 @@ export function AppShell({children, user}: {children: React.ReactNode; user: Ses
             </div>
           </div>
         </header>
+        {Boolean(demoDataCount) && (
+          <div className="demo-data-banner" role="status">
+            <strong>DEMO DATA</strong>
+            <span>{demoDataCount} sample records are present. Export and reset before real operational use.</span>
+            {user.role === "Super Admin" && <Link href="/admin/data-reset">Open reset</Link>}
+          </div>
+        )}
         <main id="main-content" tabIndex={-1}>{children}</main>
       </div>
     </div>
