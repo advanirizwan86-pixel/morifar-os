@@ -1,4 +1,5 @@
 import "server-only";
+import {assertDummyMode} from "@/server/private-client/policy";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -170,6 +171,6 @@ function seed(db:DatabaseSync){
  insertIgnore(db,"INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)",["company",JSON.stringify({name:"Morifar Group",timezone:"Asia/Dubai",currency:"AED",language:"English"})]);
  insertIgnore(db,"INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)",["company_profile",JSON.stringify(defaultCompanyProfile)]);
 }
-export function getDb(){if(!globalDb.morifarDb){mkdirSync(dirname(dbPath),{recursive:true});const db=new DatabaseSync(dbPath);db.exec(readFileSync(join(process.cwd(),"server","db","schema.sql"),"utf8"));migrate(db);seed(db);globalDb.morifarDb=db}return globalDb.morifarDb}
+export function getDb(){assertDummyMode(process.env);if(!globalDb.morifarDb){mkdirSync(dirname(dbPath),{recursive:true});const db=new DatabaseSync(dbPath);db.exec(readFileSync(join(process.cwd(),"server","db","schema.sql"),"utf8"));migrate(db);seed(db);globalDb.morifarDb=db}return globalDb.morifarDb}
 export function verifyPassword(password:string,stored:string){const [salt,expected]=stored.split(":");if(!salt||!expected)return false;const actual=hashPassword(password,salt);return actual.length===expected.length&&timingSafeEqual(Buffer.from(actual),Buffer.from(expected))}
 export function newId(prefix:string){return `${prefix}_${crypto.randomUUID().replaceAll("-","").slice(0,16)}`}

@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconFilter,IconFileCheck,IconShieldCheck} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -5,6 +6,8 @@ import {updateDocumentRequest} from "@/features/business-operations/actions";
 import {listDocumentRequests} from "@/server/repositories/business-operations";
 
 export default async function DocumentsPage({searchParams}:{searchParams:Promise<{status?:string}>}){
+ await enforcePageAccess();
+
  const {status="all"}=await searchParams,documents=listDocumentRequests({status});
  return <div className="page">
   <PageHeader eyebrow="DOCUMENT COLLECTION" title="Document Manager" subtitle="Secure checklist tracking for passports, visas, Emirates IDs, licences, MOA, POA, statements and photographs."/>

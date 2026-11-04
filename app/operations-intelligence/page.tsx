@@ -1,10 +1,13 @@
+import {requireExecutiveSession as enforcePageAccess} from "@/features/auth/session";
 import {PageHeader} from "@/components/page-header";
 import {AiDisclosure, IntelligenceLinkBar, OperationsDashboard} from "@/components/intelligence-panels";
 import {getOperationsIntelligence} from "@/server/services/intelligence";
 
 export const dynamic = "force-dynamic";
 
-export default function OperationsIntelligencePage() {
+export default async function OperationsIntelligencePage() {
+ await enforcePageAccess();
+
   const data = getOperationsIntelligence();
   return (
     <div className="page">

@@ -12,6 +12,7 @@
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "smoke:routes": "node scripts/route-smoke.mjs",
+    "test:private-client": "node scripts/private-client-tests.cjs",
     "test:service-automation": "node scripts/service-automation-tests.mjs"
   },
   "dependencies": {

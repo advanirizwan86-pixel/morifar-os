@@ -1,7 +1,7 @@
 "use server";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
-import {requireSession} from "@/features/auth/session";
+import {requireOperatorSession} from "@/features/auth/session";
 import {requiredText,validEmail} from "@/features/shared/validation";
 import {getDb,newId} from "@/server/db";
 import {documentTypes,formationStatuses} from "@/server/repositories/business-operations";
@@ -21,7 +21,7 @@ function notify(userId:string,type:string,title:string,message:string,entityType
 }
 
 export async function createCompanyApplication(_:BusinessActionState,form:FormData):Promise<BusinessActionState>{
- const user=await requireSession();
+ const user=await requireOperatorSession();
  const company=String(form.get("company")??""),client=String(form.get("client")??"")||null,consultant=String(form.get("consultant")??user.id),ai=String(form.get("ai")??"")||null;
  const fields=["jurisdiction","structure_type","business_activity","office_requirement"] as const;
  const values:Record<string,string>={},errors:Record<string,string>={};
@@ -45,7 +45,7 @@ export async function createCompanyApplication(_:BusinessActionState,form:FormDa
 }
 
 export async function transitionFormationStatus(form:FormData){
- const user=await requireSession();
+ const user=await requireOperatorSession();
  const id=String(form.get("id")??""),next=String(form.get("next")??""),notes=String(form.get("notes")??"").trim();
  if(!formationStatuses.includes(next as never))return;
  const row=getDb().prepare("SELECT current_status,assigned_consultant_id FROM company_applications WHERE id=?").get(id) as {current_status:string;assigned_consultant_id:string|null}|undefined;
@@ -60,7 +60,7 @@ export async function transitionFormationStatus(form:FormData){
 }
 
 export async function createClientOnboarding(_:BusinessActionState,form:FormData):Promise<BusinessActionState>{
- const user=await requireSession();
+ const user=await requireOperatorSession();
  const required=["client_name","company_name","phone","email","address","nationality","service_required","source","priority","risk_level"] as const;
  const values:Record<string,string>={},errors:Record<string,string>={};
  required.forEach(key=>{const result=requiredText(form,key,2,250);values[key]=result.value;if(result.error)errors[key]=result.error});
@@ -79,7 +79,7 @@ export async function createClientOnboarding(_:BusinessActionState,form:FormData
 }
 
 export async function updateDocumentRequest(form:FormData){
- const user=await requireSession();
+ const user=await requireOperatorSession();
  const id=String(form.get("id")??""),status=String(form.get("status")??""),notes=String(form.get("notes")??"").trim(),expiry=String(form.get("expiry_date")??"")||null;
  if(!["pending","uploaded","rejected","approved"].includes(status))return;
  const row=getDb().prepare("SELECT status,client_id,company_id FROM document_requests WHERE id=?").get(id) as {status:string;client_id:string|null;company_id:string|null}|undefined;
@@ -95,7 +95,7 @@ export async function updateDocumentRequest(form:FormData){
 }
 
 export async function decideApproval(form:FormData){
- const user=await requireSession();
+ const user=await requireOperatorSession();
  const id=String(form.get("id")??""),decision=String(form.get("decision")??""),notes=String(form.get("notes")??"").trim();
  const allowed=["approved","rejected","changes_requested","escalated"];
  if(!allowed.includes(decision))return;
@@ -111,7 +111,7 @@ export async function decideApproval(form:FormData){
 }
 
 export async function updateQueueItem(form:FormData){
- const user=await requireSession();
+ const user=await requireOperatorSession();
  const id=String(form.get("id")??""),status=String(form.get("status")??""),assignee=String(form.get("assigned_user")??"")||null;
  if(!["open","in_progress","blocked","done"].includes(status))return;
  const row=getDb().prepare("SELECT status FROM department_queue_items WHERE id=?").get(id) as {status:string}|undefined;

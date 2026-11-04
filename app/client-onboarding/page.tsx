@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconArrowUpRight,IconUserPlus} from "@tabler/icons-react";
 import {ClientOnboardingForm} from "@/components/business-operation-forms";
@@ -5,6 +6,8 @@ import {PageHeader} from "@/components/page-header";
 import {listTimeline} from "@/server/repositories/business-operations";
 
 export default async function ClientOnboardingPage({searchParams}:{searchParams:Promise<{created?:string}>}){
+ await enforcePageAccess();
+
  const params=await searchParams,timeline=listTimeline("client").slice(0,8);
  return <div className="page narrow-page">
   <PageHeader eyebrow="CLIENT ONBOARDING" title="Onboarding Wizard" subtitle="Capture client, company, identity, service, source, priority and risk level into a real client profile." action={<Link className="secondary-button" href="/crm">Open CRM <IconArrowUpRight size={14}/></Link>}/>

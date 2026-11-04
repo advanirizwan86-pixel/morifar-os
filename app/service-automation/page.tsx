@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconAlertTriangle, IconArrowUpRight, IconChecklist, IconFileDescription, IconMessageCircle, IconRobot, IconShieldCheck, IconTimelineEvent} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -5,7 +6,9 @@ import {getServiceAutomationDashboard} from "@/server/services/service-automatio
 
 export const dynamic = "force-dynamic";
 
-export default function ServiceAutomationPage() {
+export default async function ServiceAutomationPage() {
+ await enforcePageAccess();
+
   const data = getServiceAutomationDashboard();
   const metrics = [
     ["REVENUE PIPELINE", data.executiveMetrics.revenuePipeline],

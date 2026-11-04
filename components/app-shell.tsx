@@ -46,6 +46,8 @@ const navGroups: {label: string; items: NavItem[]}[] = [
   {
     label: "Operations",
     items: [
+      {href: "/private-client", label: "Private Client", icon: IconUsersGroup, executiveOnly: true},
+      {href: "/launch-readiness", label: "Launch Readiness", icon: IconChecklist, executiveOnly: true},
       {href: "/business-operations", label: "Operations", icon: IconBriefcase2},
       {href: "/service-automation", label: "Service Automation", icon: IconRobot},
       {href: "/company-formation", label: "Formation", icon: IconBuildingSkyscraper},
@@ -222,7 +224,7 @@ export function AppShell({children, demoDataCount, user}: {children: React.React
             {user.role === "Super Admin" && <Link href="/admin/data-reset">Open reset</Link>}
           </div>
         )}
-        <main id="main-content" tabIndex={-1}>{children}</main>
+        <main id="main-content" tabIndex={-1}><div role="status" style={{padding:"12px 24px",borderBottom:"1px solid #b89555"}}>Dummy data only — live client data requires written approval of requirements 1–5. <Link href="/launch-readiness">Launch readiness</Link></div>{children}</main>
       </div>
     </div>
   );

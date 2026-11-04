@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconFilter,IconGitBranch} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -5,6 +6,8 @@ import {updateQueueItem} from "@/features/business-operations/actions";
 import {businessFormOptions,listDepartmentQueueItems} from "@/server/repositories/business-operations";
 
 export default async function DepartmentQueuesPage({searchParams}:{searchParams:Promise<{department?:string;status?:string;q?:string}>}){
+ await enforcePageAccess();
+
  const params=await searchParams,department=params.department??"all",status=params.status??"all",q=params.q??"",options=businessFormOptions(),items=listDepartmentQueueItems({department,status,q});
  return <div className="page">
   <PageHeader eyebrow="DEPARTMENT QUEUES" title="Department Queues" subtitle="Formation, operations, sales, compliance and AI work queues with filtering, assignment and priority."/>

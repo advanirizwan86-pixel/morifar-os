@@ -1,3 +1,4 @@
+import {requireExecutiveSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconBrain, IconSearch} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -16,6 +17,8 @@ const prompts = [
 ];
 
 export default async function ExecutiveCopilotPage({searchParams}: {searchParams: Promise<{q?: string}>}) {
+ await enforcePageAccess();
+
   const {q = "Show today's highest-priority work."} = await searchParams;
   const response = await answerExecutiveQuestion(q);
   return (

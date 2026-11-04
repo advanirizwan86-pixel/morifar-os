@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {IconArrowLeft,IconCalendarStats,IconFileCheck,IconHistory} from "@tabler/icons-react";
@@ -5,6 +6,8 @@ import {PageHeader} from "@/components/page-header";
 import {getFormationApplication} from "@/server/repositories/business-operations";
 
 export default async function FormationDetailPage({params}:{params:Promise<{id:string}>}){
+ await enforcePageAccess();
+
  const {id}=await params,data=getFormationApplication(id);
  if(!data)notFound();
  const {application,statusLogs,documents}=data;

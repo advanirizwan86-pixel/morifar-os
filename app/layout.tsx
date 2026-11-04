@@ -12,7 +12,7 @@ import "./intelligence.css";
 import { getDataResetPreview } from "@/server/repositories/data-reset";
 
 export const metadata: Metadata = {
-  title: "Morifar One",
+  title: "Morifar OS",
   description: "Executive business expansion command center",
 };
 

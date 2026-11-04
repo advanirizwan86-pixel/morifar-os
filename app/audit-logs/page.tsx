@@ -1,8 +1,11 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import {IconLockCheck} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
 import {listAuditLogs} from "@/server/repositories/business-operations";
 
-export default function AuditLogsPage(){
+export default async function AuditLogsPage(){
+ await enforcePageAccess();
+
  const rows=listAuditLogs();
  return <div className="page">
   <PageHeader eyebrow="IMMUTABLE AUDIT HISTORY" title="Audit Logs" subtitle="Who, what, when, before, after, IP placeholder and reason for operational events."/>
