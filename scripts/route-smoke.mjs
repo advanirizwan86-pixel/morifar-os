@@ -46,6 +46,7 @@ function inputValue(html, name) {
 }
 
 async function login() {
+  if (process.env.MORIFAR_REVIEW_COOKIE) return process.env.MORIFAR_REVIEW_COOKIE;
   if (!email || !password) {
     throw new Error("Set MORIFAR_REVIEW_EMAIL and MORIFAR_REVIEW_PASSWORD to run authenticated smoke tests.");
   }
@@ -69,7 +70,7 @@ async function login() {
     redirect: "manual",
   });
   const cookie = (response.headers.get("set-cookie") ?? "").match(/morifar_session=[^;]+/)?.[0] ?? "";
-  if (response.status !== 303 || !cookie) throw new Error(`Login failed: ${response.status}`);
+  if (response.status !== 303 || !cookie) throw new Error(`Login failed or MFA required: ${response.status}. Complete two-factor login and set MORIFAR_REVIEW_COOKIE for authenticated smoke checks.`);
   return cookie;
 }
 

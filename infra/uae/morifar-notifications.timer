@@ -1,0 +1,8 @@
+[Unit]
+Description=Hourly Morifar expiry, overdue and weekly-draft processing
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=90
+[Install]
+WantedBy=timers.target

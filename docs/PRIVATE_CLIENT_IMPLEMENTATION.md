@@ -1,5 +1,7 @@
 # Morifar OS private-client readiness — implementation 1
 
+Follow-up: see `docs/SECURITY_AND_UAE_DEPLOYMENT.md` for the subsequent MFA, staff access, photo, scheduler and backup implementation. The remaining-work descriptions below record implementation 1 and are superseded where noted in that follow-up.
+
 Baseline: 4 November 2026. Branch: `feat/private-client-readiness`.
 
 ## Release decision

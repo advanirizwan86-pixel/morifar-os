@@ -1,0 +1,10 @@
+[Unit]
+Description=Morifar OS authenticated in-app notification job
+After=morifar.service
+[Service]
+Type=oneshot
+User=morifar
+EnvironmentFile=/etc/morifar/runtime.env
+ExecStart=/usr/bin/node /opt/morifar-os/scripts/security/run-notifications.mjs
+NoNewPrivileges=true
+PrivateTmp=true

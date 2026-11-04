@@ -1,0 +1,17 @@
+[Unit]
+Description=Daily encrypted Morifar snapshot to separate UAE account
+After=network-online.target
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/opt/morifar-os
+EnvironmentFile=/etc/morifar/backup.env
+ExecStart=/usr/bin/node /opt/morifar-os/scripts/security/daily-backup.mjs
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/var/lib/morifar
+ReadWritePaths=/var/lib/morifar-backups

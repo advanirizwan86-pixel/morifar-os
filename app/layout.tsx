@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const user = await getSession();
-  const demoDataCount = user ? getDataResetPreview().reduce((sum, item) => sum + item.count, 0) : 0;
+  const demoDataCount = user?.role==="Super Admin" ? getDataResetPreview().reduce((sum, item) => sum + item.count, 0) : 0;
   return (
     <html lang="en">
       <body style={{ "--font-sans": "Inter, Segoe UI, Arial, sans-serif", "--font-display": "Iowan Old Style, Palatino Linotype, Georgia, serif" } as React.CSSProperties}>

@@ -2,7 +2,7 @@
 
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
-import {requireExecutiveSession} from "@/features/auth/session";
+import {requireExecutiveOperator} from "@/features/auth/session";
 import {getDb, newId} from "@/server/db";
 import type {WorkflowDefinition, WorkflowPriority, WorkflowStatus} from "@/features/workflow-engine/types";
 
@@ -60,7 +60,7 @@ function readStringArray(value: string) {
 }
 
 export async function saveWorkflow(_: WorkflowSaveState, form: FormData): Promise<WorkflowSaveState> {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const id = String(form.get("workflowId") ?? "");
   const name = String(form.get("name") ?? "").trim();
   const description = String(form.get("description") ?? "").trim();
@@ -97,7 +97,7 @@ export async function saveWorkflow(_: WorkflowSaveState, form: FormData): Promis
 }
 
 export async function startWorkflow(form: FormData) {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const workflowId = String(form.get("workflowId") ?? "");
   const clientId = String(form.get("clientId") ?? "") || null;
   const companyId = String(form.get("companyId") ?? "") || null;
@@ -121,7 +121,7 @@ export async function startWorkflow(form: FormData) {
 }
 
 export async function pauseWorkflow(form: FormData) {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const workflowId = String(form.get("workflowId") ?? "");
   const db = getDb();
   const workflow = db.prepare("SELECT status FROM workflows WHERE id=?").get(workflowId) as {status: string} | undefined;
@@ -136,7 +136,7 @@ export async function pauseWorkflow(form: FormData) {
 }
 
 export async function resumeWorkflow(form: FormData) {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const workflowId = String(form.get("workflowId") ?? "");
   const db = getDb();
   const workflow = db.prepare("SELECT status FROM workflows WHERE id=?").get(workflowId) as {status: string} | undefined;
@@ -151,7 +151,7 @@ export async function resumeWorkflow(form: FormData) {
 }
 
 export async function approvalAction(form: FormData) {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const runId = String(form.get("runId") ?? "");
   const decision = String(form.get("decision") ?? "");
   const db = getDb();

@@ -98,6 +98,7 @@ function seedBusinessOperations(db:DatabaseSync,adminId:string){
  insertIgnore(db,"INSERT OR IGNORE INTO activities (id,actor_type,actor_id,action,entity_type,entity_id,metadata) VALUES (?,?,?,?,?,?,?)",["act_ops_1","user",adminId,"changed formation status","company_application","app_azm",JSON.stringify({from:"trade_name",to:"initial_approval"})]);
 }
 function upsertBootstrapUser(db:DatabaseSync){
+ if(db.prepare("SELECT id FROM users LIMIT 1").get())return;
  const bootstrapPassword=process.env.MORIFAR_BOOTSTRAP_PASSWORD;
  if(!bootstrapPassword||bootstrapPassword.length<12)return;
  const salt=crypto.randomUUID();
@@ -139,7 +140,7 @@ function seedOperations(db:DatabaseSync){
 }
 
 function seed(db:DatabaseSync){
- const roles=["Super Admin","CEO","COO","CTO Reviewer","Manager","Consultant","Sales","Finance","Legal","HR"];
+ const roles=["Super Admin","CEO","COO","CTO Reviewer","Manager","Consultant","Sales","Finance","Legal","HR","PRO","Reception","Accounts"];
  roles.forEach(name=>insertIgnore(db,"INSERT OR IGNORE INTO roles (id,name,permissions) VALUES (?,?,?)",[`role_${name.toLowerCase().replaceAll(" ","_")}`,name,JSON.stringify(name==="Super Admin"?["*"]:["dashboard:read","crm:read","tasks:read"])]));
  const departments=[
   ["sales","Sales Department"],

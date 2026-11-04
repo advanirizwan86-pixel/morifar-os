@@ -1,0 +1,13 @@
+# Install TLS certificates through the approved DNS provider or internal PKI.
+# No client data, secrets or request bodies should be written to access logs.
+{$MORIFAR_DOMAIN} {
+  tls {$MORIFAR_TLS_CERT} {$MORIFAR_TLS_KEY}
+  request_body { max_size 9MB }
+  reverse_proxy 127.0.0.1:3000
+  header {
+    Strict-Transport-Security "max-age=31536000"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "same-origin"
+  }
+}

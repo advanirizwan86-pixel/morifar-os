@@ -1,0 +1,307 @@
+{
+  "terraform": {
+    "required_version": ">= 1.6.0, < 2.0.0",
+    "required_providers": {
+      "aws": {
+        "source": "hashicorp/aws",
+        "version": "~> 5.0"
+      }
+    }
+  },
+  "provider": {
+    "aws": [
+      {
+        "region": "me-central-1",
+        "profile": "${var.primary_profile}",
+        "allowed_account_ids": [
+          "${var.primary_account_id}"
+        ],
+        "default_tags": [
+          {
+            "tags": {
+              "Project": "Morifar-OS",
+              "DataMode": "dummy",
+              "Owner": "Morifar-Group"
+            }
+          }
+        ]
+      },
+      {
+        "alias": "backup",
+        "region": "me-central-1",
+        "profile": "${var.backup_profile}",
+        "allowed_account_ids": [
+          "${var.backup_account_id}"
+        ]
+      }
+    ]
+  },
+  "variable": {
+    "primary_profile": {
+      "type": "string"
+    },
+    "backup_profile": {
+      "type": "string"
+    },
+    "primary_account_id": {
+      "type": "string",
+      "validation": [
+        {
+          "condition": "${can(regex(\"^[0-9]{12}$\", var.primary_account_id))}",
+          "error_message": "Use a verified Morifar account ID."
+        }
+      ]
+    },
+    "backup_account_id": {
+      "type": "string",
+      "validation": [
+        {
+          "condition": "${can(regex(\"^[0-9]{12}$\", var.backup_account_id))}",
+          "error_message": "Use a verified separate backup account ID."
+        }
+      ]
+    },
+    "approved_ami_id": {
+      "type": "string",
+      "description": "Security-reviewed Linux image verified in UAE me-central-1."
+    },
+    "instance_type": {
+      "type": "string",
+      "default": "t3.medium"
+    },
+    "backup_bucket_name": {
+      "type": "string"
+    },
+    "allowed_https_cidrs": {
+      "type": "list(string)",
+      "description": "Approved office/VPN CIDRs only for dummy testing."
+    }
+  },
+  "data": {
+    "aws_availability_zones": {
+      "uae": {
+        "state": "available"
+      }
+    }
+  },
+  "resource": {
+    "aws_kms_key": {
+      "data": {
+        "description": "Morifar UAE data-volume encryption",
+        "enable_key_rotation": true,
+        "deletion_window_in_days": 30,
+        "lifecycle": {
+          "prevent_destroy": true
+        }
+      },
+      "backup": {
+        "provider": "aws.backup",
+        "description": "Morifar separate-account UAE backup encryption",
+        "enable_key_rotation": true,
+        "deletion_window_in_days": 30,
+        "lifecycle": {
+          "prevent_destroy": true
+        }
+      }
+    },
+    "aws_vpc": {
+      "app": {
+        "cidr_block": "10.86.0.0/16",
+        "enable_dns_hostnames": true
+      }
+    },
+    "aws_subnet": {
+      "app": {
+        "vpc_id": "${aws_vpc.app.id}",
+        "cidr_block": "10.86.1.0/24",
+        "availability_zone": "${data.aws_availability_zones.uae.names[0]}"
+      }
+    },
+    "aws_internet_gateway": {
+      "app": {
+        "vpc_id": "${aws_vpc.app.id}"
+      }
+    },
+    "aws_route_table": {
+      "app": {
+        "vpc_id": "${aws_vpc.app.id}",
+        "route": [
+          {
+            "cidr_block": "0.0.0.0/0",
+            "gateway_id": "${aws_internet_gateway.app.id}"
+          }
+        ]
+      }
+    },
+    "aws_route_table_association": {
+      "app": {
+        "subnet_id": "${aws_subnet.app.id}",
+        "route_table_id": "${aws_route_table.app.id}"
+      }
+    },
+    "aws_security_group": {
+      "app": {
+        "name_prefix": "morifar-os-",
+        "vpc_id": "${aws_vpc.app.id}",
+        "ingress": [
+          {
+            "from_port": 443,
+            "to_port": 443,
+            "protocol": "tcp",
+            "cidr_blocks": "${var.allowed_https_cidrs}"
+          }
+        ],
+        "egress": [
+          {
+            "from_port": 443,
+            "to_port": 443,
+            "protocol": "tcp",
+            "cidr_blocks": [
+              "0.0.0.0/0"
+            ]
+          }
+        ]
+      }
+    },
+    "aws_iam_role": {
+      "app": {
+        "name_prefix": "morifar-os-",
+        "assume_role_policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"ec2.amazonaws.com\"}, \"Action\": \"sts:AssumeRole\"}]}"
+      }
+    },
+    "aws_iam_role_policy_attachment": {
+      "ssm": {
+        "role": "${aws_iam_role.app.name}",
+        "policy_arn": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+    },
+    "aws_iam_instance_profile": {
+      "app": {
+        "role": "${aws_iam_role.app.name}"
+      }
+    },
+    "aws_instance": {
+      "app": {
+        "ami": "${var.approved_ami_id}",
+        "instance_type": "${var.instance_type}",
+        "subnet_id": "${aws_subnet.app.id}",
+        "associate_public_ip_address": true,
+        "vpc_security_group_ids": [
+          "${aws_security_group.app.id}"
+        ],
+        "iam_instance_profile": "${aws_iam_instance_profile.app.name}",
+        "metadata_options": [
+          {
+            "http_endpoint": "enabled",
+            "http_tokens": "required",
+            "http_put_response_hop_limit": 1
+          }
+        ],
+        "root_block_device": [
+          {
+            "encrypted": true,
+            "kms_key_id": "${aws_kms_key.data.arn}",
+            "volume_size": 30,
+            "volume_type": "gp3"
+          }
+        ],
+        "lifecycle": {
+          "prevent_destroy": true
+        }
+      }
+    },
+    "aws_ebs_volume": {
+      "data": {
+        "availability_zone": "${aws_subnet.app.availability_zone}",
+        "encrypted": true,
+        "kms_key_id": "${aws_kms_key.data.arn}",
+        "size": 100,
+        "type": "gp3",
+        "lifecycle": {
+          "prevent_destroy": true
+        }
+      }
+    },
+    "aws_volume_attachment": {
+      "data": {
+        "device_name": "/dev/sdf",
+        "volume_id": "${aws_ebs_volume.data.id}",
+        "instance_id": "${aws_instance.app.id}"
+      }
+    },
+    "aws_s3_bucket": {
+      "backup": {
+        "provider": "aws.backup",
+        "bucket": "${var.backup_bucket_name}",
+        "force_destroy": false,
+        "lifecycle": {
+          "prevent_destroy": true,
+          "precondition": [
+            {
+              "condition": "${var.primary_account_id != var.backup_account_id}",
+              "error_message": "Use a separate Morifar-controlled backup account."
+            }
+          ]
+        }
+      }
+    },
+    "aws_s3_bucket_public_access_block": {
+      "backup": {
+        "provider": "aws.backup",
+        "bucket": "${aws_s3_bucket.backup.id}",
+        "block_public_acls": true,
+        "block_public_policy": true,
+        "ignore_public_acls": true,
+        "restrict_public_buckets": true
+      }
+    },
+    "aws_s3_bucket_versioning": {
+      "backup": {
+        "provider": "aws.backup",
+        "bucket": "${aws_s3_bucket.backup.id}",
+        "versioning_configuration": [
+          {
+            "status": "Enabled"
+          }
+        ]
+      }
+    },
+    "aws_s3_bucket_server_side_encryption_configuration": {
+      "backup": {
+        "provider": "aws.backup",
+        "bucket": "${aws_s3_bucket.backup.id}",
+        "rule": [
+          {
+            "apply_server_side_encryption_by_default": [
+              {
+                "sse_algorithm": "aws:kms",
+                "kms_master_key_id": "${aws_kms_key.backup.arn}"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "aws_s3_bucket_policy": {
+      "backup": {
+        "provider": "aws.backup",
+        "bucket": "${aws_s3_bucket.backup.id}",
+        "policy": "${jsonencode({ Version = \"2012-10-17\", Statement = [{ Sid = \"DenyNonTLS\", Effect = \"Deny\", Principal = \"*\", Action = \"s3:*\", Resource = [aws_s3_bucket.backup.arn, \"${aws_s3_bucket.backup.arn}/*\"], Condition = { Bool = { \"aws:SecureTransport\" = \"false\" } } }] })}"
+      }
+    }
+  },
+  "output": {
+    "instance_id": {
+      "value": "${aws_instance.app.id}"
+    },
+    "data_volume_id": {
+      "value": "${aws_ebs_volume.data.id}"
+    },
+    "backup_bucket": {
+      "value": "${aws_s3_bucket.backup.id}"
+    },
+    "backup_kms_key_arn": {
+      "value": "${aws_kms_key.backup.arn}"
+    }
+  }
+}

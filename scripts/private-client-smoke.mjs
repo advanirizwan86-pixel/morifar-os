@@ -8,7 +8,8 @@ const admin=db.prepare("SELECT u.*,r.name role FROM users u JOIN roles r ON r.id
 assert(admin,'Run route smoke login first to bootstrap the isolated database');
 function cookie(user){const payload=Buffer.from(JSON.stringify({...user,exp:Date.now()+60000})).toString('base64url');return 'morifar_session='+payload+'.'+createHmac('sha256',process.env.AUTH_SECRET).update(payload).digest('base64url');}
 async function get(route,token){return fetch(base+route,{headers:token?{cookie:token}:{},redirect:'manual'});}
-const adminCookie=cookie(admin);
+const security=db.prepare("SELECT version FROM user_security WHERE user_id=?").get(admin.id);
+const adminCookie=process.env.MORIFAR_REVIEW_COOKIE??cookie({...admin,mfaVerified:true,authVersion:security?.version});
 for(const route of ['/private-client','/launch-readiness']){
  assert.equal((await get(route)).status,307);
  const r=await get(route,adminCookie);assert.equal(r.status,200);assert.match(await r.text(),/Live client data|live client data/);
@@ -24,7 +25,8 @@ assert.equal(db.prepare('SELECT count(*) n FROM private_client_cases').get().n,b
 const reviewerRole=db.prepare("SELECT id FROM roles WHERE name='CTO Reviewer'").get();assert(reviewerRole);
 db.prepare("INSERT OR REPLACE INTO users(id,name,email,password_hash,role_id,avatar) VALUES ('synthetic-reviewer','Synthetic Reviewer','reviewer@example.invalid','not-a-login-password',?,'SR')").run(reviewerRole.id);
 // Claims say Super Admin; DB role must take precedence for page/action permissions.
-const forgedRoleCookie=cookie({...admin,id:'synthetic-reviewer',role:'Super Admin'});
+db.prepare("INSERT OR REPLACE INTO user_security(user_id,secret,enabled,version) VALUES ('synthetic-reviewer',X'00',1,1)").run();
+const forgedRoleCookie=cookie({...admin,id:'synthetic-reviewer',role:'Super Admin',mfaVerified:true,authVersion:1});
 assert.equal((await get('/private-client',forgedRoleCookie)).status,200);
 const denied=await post(forgedRoleCookie);assert.equal(denied.status,500); // server action rejects before writing
 assert.equal(db.prepare('SELECT count(*) n FROM private_client_cases').get().n,before+1);

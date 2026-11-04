@@ -1,0 +1,23 @@
+name: Security readiness (dummy data)
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: corepack enable && corepack prepare pnpm@11.25.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: node node_modules/typescript/bin/tsc --noEmit
+      - run: node scripts/private-client-tests.cjs
+      - run: node scripts/security/security-tests.cjs
+      - run: node scripts/security/backup-tests.cjs
+      - run: node node_modules/next/dist/bin/next build
+      - run: node scripts/security/runtime-tests.cjs

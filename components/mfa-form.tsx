@@ -1,0 +1,5 @@
+"use client";
+import {useActionState} from "react";
+import Link from "next/link";
+import {verifySecondFactor} from "@/features/auth/mfa-actions";
+export function MfaForm({enrolling,authenticated=false}:{enrolling:boolean;authenticated?:boolean}){const[state,action,pending]=useActionState(verifySecondFactor,{});if(state.verified)return <div><h2>Two-factor verification complete</h2>{state.recovery&&<><p>Save these one-time recovery codes in your password manager now. They will not be displayed again.</p><ul>{state.recovery.map(code=><li key={code}><code>{code}</code></li>)}</ul></>}<Link className="gold-button" href="/staff">Continue to Morifar OS</Link></div>;if(authenticated)return <p>Two-factor authentication is enabled. <Link href="/staff">Continue to Morifar OS</Link></p>;return <form action={action}><label>{enrolling?"Authenticator code":"Authenticator or recovery code"}<input name="code" autoComplete="one-time-code" required maxLength={40}/></label>{state.error&&<p role="alert">{state.error}</p>}<button className="gold-button" disabled={pending}>{pending?"Verifying…":"Verify two-factor login"}</button></form>}

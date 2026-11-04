@@ -1,0 +1,8 @@
+[Unit]
+Description=Daily Morifar encrypted backup
+[Timer]
+OnCalendar=*-*-* 02:00:00 Asia/Dubai
+Persistent=true
+RandomizedDelaySec=300
+[Install]
+WantedBy=timers.target
