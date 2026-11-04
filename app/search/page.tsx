@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconArrowUpRight, IconSearch} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -6,6 +7,8 @@ import {globalSearch} from "@/server/repositories/search";
 export const dynamic = "force-dynamic";
 
 export default async function SearchPage({searchParams}: {searchParams: Promise<{q?: string}>}) {
+ await enforcePageAccess();
+
   const {q = ""} = await searchParams;
   const results = globalSearch(q);
 

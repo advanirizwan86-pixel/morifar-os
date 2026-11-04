@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconArrowUpRight,IconBuildingSkyscraper,IconChecks,IconFileDescription} from "@tabler/icons-react";
 import {CompanyApplicationForm} from "@/components/business-operation-forms";
@@ -6,6 +7,8 @@ import {transitionFormationStatus} from "@/features/business-operations/actions"
 import {businessFormOptions,formationStatuses,listFormationApplications} from "@/server/repositories/business-operations";
 
 export default async function CompanyFormationPage({searchParams}:{searchParams:Promise<{status?:string;created?:string}>}){
+ await enforcePageAccess();
+
  const params=await searchParams,status=params.status??"all",apps=listFormationApplications(status),options=businessFormOptions();
  return <div className="page">
   <PageHeader eyebrow="COMPANY FORMATION" title="Company Formation" subtitle="Applications, milestones, consultants, AI support, required documents and audit-backed transitions."/>

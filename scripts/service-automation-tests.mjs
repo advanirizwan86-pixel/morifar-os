@@ -14,6 +14,7 @@ function inputValue(html, name) {
 }
 
 async function login() {
+  if (process.env.MORIFAR_REVIEW_COOKIE) return process.env.MORIFAR_REVIEW_COOKIE;
   if (!email || !password) throw new Error("Set MORIFAR_REVIEW_EMAIL and MORIFAR_REVIEW_PASSWORD.");
   const loginHtml = await (await fetch(`${baseUrl}/login`)).text();
   const fields = {
@@ -28,7 +29,7 @@ async function login() {
   const body = Object.entries(fields).map(([key, value]) => `--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${value}\r\n`).join("") + `--${boundary}--\r\n`;
   const response = await fetch(`${baseUrl}/login`, {method: "POST", body, headers: {"content-type": `multipart/form-data; boundary=${boundary}`}, redirect: "manual"});
   const cookie = (response.headers.get("set-cookie") ?? "").match(/morifar_session=[^;]+/)?.[0] ?? "";
-  if (!cookie) throw new Error(`Login failed: ${response.status}`);
+  if (!cookie) throw new Error(`Login failed or MFA required: ${response.status}. Complete two-factor login and set MORIFAR_REVIEW_COOKIE for authenticated smoke checks.`);
   return cookie;
 }
 

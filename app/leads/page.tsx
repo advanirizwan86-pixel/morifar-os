@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconFilter, IconSearch, IconUserPlus} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -10,6 +11,8 @@ export default async function LeadsPage({
 }: {
   searchParams: Promise<{q?: string; status?: string; created?: string}>;
 }) {
+ await enforcePageAccess();
+
   const params = await searchParams;
   const q = params.q ?? "";
   const status = params.status ?? "all";

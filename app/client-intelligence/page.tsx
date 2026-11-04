@@ -1,10 +1,13 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import {PageHeader} from "@/components/page-header";
 import {BriefingPanel, IntelligenceLinkBar} from "@/components/intelligence-panels";
 import {getClientIntelligence, getCompanyBriefings} from "@/server/services/intelligence";
 
 export const dynamic = "force-dynamic";
 
-export default function ClientIntelligencePage() {
+export default async function ClientIntelligencePage() {
+ await enforcePageAccess();
+
   const clients = getClientIntelligence();
   const companies = getCompanyBriefings();
   return (

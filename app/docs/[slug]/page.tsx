@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import {readFile} from "node:fs/promises";
 import {join, normalize} from "node:path";
 import Link from "next/link";
@@ -40,6 +41,8 @@ function renderMarkdown(markdown: string) {
 }
 
 export default async function DocsPage({params}: {params: Promise<{slug: string}>}) {
+ await enforcePageAccess();
+
   await requireCtoSession();
   const {slug} = await params;
   const file = decodeURIComponent(slug);

@@ -1,4 +1,5 @@
 import "server-only";
+import {assertDummyMode} from "@/server/private-client/policy";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -97,6 +98,7 @@ function seedBusinessOperations(db:DatabaseSync,adminId:string){
  insertIgnore(db,"INSERT OR IGNORE INTO activities (id,actor_type,actor_id,action,entity_type,entity_id,metadata) VALUES (?,?,?,?,?,?,?)",["act_ops_1","user",adminId,"changed formation status","company_application","app_azm",JSON.stringify({from:"trade_name",to:"initial_approval"})]);
 }
 function upsertBootstrapUser(db:DatabaseSync){
+ if(db.prepare("SELECT id FROM users LIMIT 1").get())return;
  const bootstrapPassword=process.env.MORIFAR_BOOTSTRAP_PASSWORD;
  if(!bootstrapPassword||bootstrapPassword.length<12)return;
  const salt=crypto.randomUUID();
@@ -138,7 +140,7 @@ function seedOperations(db:DatabaseSync){
 }
 
 function seed(db:DatabaseSync){
- const roles=["Super Admin","CEO","COO","CTO Reviewer","Manager","Consultant","Sales","Finance","Legal","HR"];
+ const roles=["Super Admin","CEO","COO","CTO Reviewer","Manager","Consultant","Sales","Finance","Legal","HR","PRO","Reception","Accounts"];
  roles.forEach(name=>insertIgnore(db,"INSERT OR IGNORE INTO roles (id,name,permissions) VALUES (?,?,?)",[`role_${name.toLowerCase().replaceAll(" ","_")}`,name,JSON.stringify(name==="Super Admin"?["*"]:["dashboard:read","crm:read","tasks:read"])]));
  const departments=[
   ["sales","Sales Department"],
@@ -170,6 +172,6 @@ function seed(db:DatabaseSync){
  insertIgnore(db,"INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)",["company",JSON.stringify({name:"Morifar Group",timezone:"Asia/Dubai",currency:"AED",language:"English"})]);
  insertIgnore(db,"INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)",["company_profile",JSON.stringify(defaultCompanyProfile)]);
 }
-export function getDb(){if(!globalDb.morifarDb){mkdirSync(dirname(dbPath),{recursive:true});const db=new DatabaseSync(dbPath);db.exec(readFileSync(join(process.cwd(),"server","db","schema.sql"),"utf8"));migrate(db);seed(db);globalDb.morifarDb=db}return globalDb.morifarDb}
+export function getDb(){assertDummyMode(process.env);if(!globalDb.morifarDb){mkdirSync(dirname(dbPath),{recursive:true});const db=new DatabaseSync(dbPath);db.exec(readFileSync(join(process.cwd(),"server","db","schema.sql"),"utf8"));migrate(db);seed(db);globalDb.morifarDb=db}return globalDb.morifarDb}
 export function verifyPassword(password:string,stored:string){const [salt,expected]=stored.split(":");if(!salt||!expected)return false;const actual=hashPassword(password,salt);return actual.length===expected.length&&timingSafeEqual(Buffer.from(actual),Buffer.from(expected))}
 export function newId(prefix:string){return `${prefix}_${crypto.randomUUID().replaceAll("-","").slice(0,16)}`}

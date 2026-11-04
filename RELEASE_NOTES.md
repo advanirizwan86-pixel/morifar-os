@@ -1,3 +1,15 @@
+# Security readiness follow-up — 4 November 2026
+
+Draft implementation; dummy data only; not deployed or approved for live use.
+
+Mandatory authenticator MFA and recovery, server-enforced staff access, private encrypted/scanned task-photo handling, idempotent in-app alert jobs, weekly draft approvals, client export and encrypted snapshot/restore tooling are added. Deployment templates and vendor/ownership review packs are prepared.
+
+**Breaking authentication change:** password-only sessions are rejected. Configure the separate data encryption key and complete MFA enrollment before accessing records. Remove bootstrap credentials after first initialization. Broad legacy records are executive-only; staff use assigned work in `/staff`.
+
+Off-site hosting/backup provisioning, actual scanner verification, independent penetration testing, signed ownership confirmations and consultant approval remain outstanding. No live-data unlock is provided. See `docs/SECURITY_AND_UAE_DEPLOYMENT.md` for evidence and rollout prerequisites.
+
+---
+
 # Morifar OS Version 1.0 Release Candidate
 
 Morifar OS Version 1.0 RC packages the completed Phase 1 through Phase 6 platform into an internal daily-operations candidate.

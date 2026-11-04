@@ -1,8 +1,11 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import {IconActivityHeartbeat} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
 import {listTimeline} from "@/server/repositories/business-operations";
 
-export default function TimelinePage(){
+export default async function TimelinePage(){
+ await enforcePageAccess();
+
  const timeline=listTimeline();
  return <div className="page narrow-page">
   <PageHeader eyebrow="ACTIVITY TIMELINE" title="Timeline" subtitle="Chronological status changes, document events, tasks, approvals, AI actions, human actions, comments and notifications."/>

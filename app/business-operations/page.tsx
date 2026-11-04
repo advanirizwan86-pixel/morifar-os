@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconArrowUpRight,IconBuildingSkyscraper,IconChecklist,IconClock,IconFileCheck,IconGitBranch,IconShieldCheck} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -12,7 +13,9 @@ const modules=[
  {href:"/department-queues",label:"Department Queues",copy:"Filtered operational queues for every team.",icon:IconGitBranch},
 ];
 
-export default function BusinessOperationsPage(){
+export default async function BusinessOperationsPage(){
+ await enforcePageAccess();
+
  const data=getBusinessOperationsDashboard();
  const metrics=[
   ["APPLICATIONS",data.metrics.applications],

@@ -1,0 +1,179 @@
+{
+  "note": "Installed local dependency metadata, not an IP ownership or licence compliance opinion. No API credentials included.",
+  "packages": [
+    {
+      "package": "@img/colour",
+      "version": "1.1.0",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@img/sharp-libvips-linux-x64",
+      "version": "1.2.4",
+      "declaredLicense": "LGPL-3.0-or-later",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@img/sharp-linux-x64",
+      "version": "0.34.5",
+      "declaredLicense": "Apache-2.0",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@next/env",
+      "version": "15.5.19",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@next/swc-linux-x64-gnu",
+      "version": "15.5.19",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@swc/helpers",
+      "version": "0.5.15",
+      "declaredLicense": "Apache-2.0",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@tabler/icons",
+      "version": "3.44.0",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@tabler/icons-react",
+      "version": "3.44.0",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@types/node",
+      "version": "22.20.0",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@types/react",
+      "version": "19.2.17",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "@types/react-dom",
+      "version": "19.2.3",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "caniuse-lite",
+      "version": "1.0.30001799",
+      "declaredLicense": "CC-BY-4.0",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "client-only",
+      "version": "0.0.1",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "csstype",
+      "version": "3.2.3",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "detect-libc",
+      "version": "2.1.2",
+      "declaredLicense": "Apache-2.0",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "nanoid",
+      "version": "3.3.15",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "next",
+      "version": "15.5.19",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "picocolors",
+      "version": "1.1.1",
+      "declaredLicense": "ISC",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "postcss",
+      "version": "8.4.31",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "react",
+      "version": "19.2.7",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "react-dom",
+      "version": "19.2.7",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "scheduler",
+      "version": "0.27.0",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "semver",
+      "version": "7.8.5",
+      "declaredLicense": "ISC",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "sharp",
+      "version": "0.34.5",
+      "declaredLicense": "Apache-2.0",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "source-map-js",
+      "version": "1.2.1",
+      "declaredLicense": "BSD-3-Clause",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "styled-jsx",
+      "version": "5.1.6",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "tslib",
+      "version": "2.8.1",
+      "declaredLicense": "0BSD",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "typescript",
+      "version": "5.9.3",
+      "declaredLicense": "Apache-2.0",
+      "review": "Declared package metadata only; legal review required"
+    },
+    {
+      "package": "undici-types",
+      "version": "6.21.0",
+      "declaredLicense": "MIT",
+      "review": "Declared package metadata only; legal review required"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import {requireExecutiveSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconBuilding, IconGlobe, IconLock, IconRobot, IconUsers} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -6,7 +7,9 @@ import {SettingsForm} from "@/components/settings-form";
 
 export const dynamic = "force-dynamic";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+ await enforcePageAccess();
+
   const db = getDb();
   const company = JSON.parse((db.prepare("SELECT value FROM settings WHERE key='company'").get() as {value: string}).value) as {
     name: string;

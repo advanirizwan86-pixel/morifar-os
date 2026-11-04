@@ -2,7 +2,7 @@
 
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
-import {requireExecutiveSession} from "@/features/auth/session";
+import {requireExecutiveOperator} from "@/features/auth/session";
 import {requiredText} from "@/features/shared/validation";
 import {getDb, newId} from "@/server/db";
 
@@ -64,7 +64,7 @@ function recordEvent(options: {
 }
 
 export async function assignAiTask(_: AssignAiTaskState, form: FormData): Promise<AssignAiTaskState> {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const title = requiredText(form, "title", 3, 180);
   const description = requiredText(form, "description", 3, 2000);
   const aiId = String(form.get("aiProfessionalId") ?? "");
@@ -141,7 +141,7 @@ export async function assignAiTask(_: AssignAiTaskState, form: FormData): Promis
 }
 
 export async function toggleAiPause(form: FormData) {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const aiId = String(form.get("aiId") ?? "");
   const pause = String(form.get("pause") ?? "") === "true";
   const db = getDb();
@@ -179,7 +179,7 @@ async function updateTaskAndRedirect(
   status: "done" | "rejected" | "escalated",
   reviewStatus: "approved" | "rejected" | "escalated",
 ) {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const taskId = String(form.get("taskId") ?? "");
   const task = await getTaskForAction(taskId);
   if (!task) redirect("/ai-command-center?error=Task%20not%20found");
@@ -227,7 +227,7 @@ export async function escalateAiTask(form: FormData) {
 }
 
 export async function reassignAiTask(form: FormData) {
-  const user = await requireExecutiveSession();
+  const user = await requireExecutiveOperator();
   const taskId = String(form.get("taskId") ?? "");
   const aiId = String(form.get("aiId") ?? "");
   const db = getDb();

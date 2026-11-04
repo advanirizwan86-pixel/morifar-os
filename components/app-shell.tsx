@@ -46,6 +46,10 @@ const navGroups: {label: string; items: NavItem[]}[] = [
   {
     label: "Operations",
     items: [
+      {href: "/staff", label: "My Work & Access", icon: IconUsersGroup},
+      {href: "/security", label: "Account Security", icon: IconChecklist},
+      {href: "/private-client", label: "Private Client", icon: IconUsersGroup, executiveOnly: true},
+      {href: "/launch-readiness", label: "Launch Readiness", icon: IconChecklist, executiveOnly: true},
       {href: "/business-operations", label: "Operations", icon: IconBriefcase2},
       {href: "/service-automation", label: "Service Automation", icon: IconRobot},
       {href: "/company-formation", label: "Formation", icon: IconBuildingSkyscraper},
@@ -126,7 +130,10 @@ export function AppShell({children, demoDataCount, user}: {children: React.React
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  if (!user || pathname === "/login" || pathname === "/forgot-password") return <>{children}</>;
+  if (!user || pathname === "/login" || pathname === "/forgot-password" || pathname === "/security") return <>{children}</>;
+
+  const staffOnly=!["Super Admin","CEO","COO","CTO Reviewer"].includes(user.role);
+  if(staffOnly)return <div className="page"><nav><Link href="/staff">My work</Link> · <Link href="/notifications">My alerts</Link> · <Link href="/security">Security</Link><form action={logout}><button>Sign out</button></form></nav><p role="status">Dummy data only. You can access only your assigned work.</p>{children}</div>;
 
   const canSeeExecutive = ["Super Admin", "CEO", "COO", "CTO Reviewer"].includes(user.role);
   const canSeeCto = ["Super Admin", "CEO", "CTO Reviewer"].includes(user.role);
@@ -222,7 +229,7 @@ export function AppShell({children, demoDataCount, user}: {children: React.React
             {user.role === "Super Admin" && <Link href="/admin/data-reset">Open reset</Link>}
           </div>
         )}
-        <main id="main-content" tabIndex={-1}>{children}</main>
+        <main id="main-content" tabIndex={-1}><div role="status" style={{padding:"12px 24px",borderBottom:"1px solid #b89555"}}>Dummy data only — live client data requires written approval of requirements 1–5. <Link href="/launch-readiness">Launch readiness</Link></div>{children}</main>
       </div>
     </div>
   );

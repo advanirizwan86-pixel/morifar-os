@@ -1,0 +1,12 @@
+import {createBackup} from './backup.mjs';
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+import {mkdir} from 'node:fs/promises';
+import {join} from 'node:path';
+const exec=promisify(execFile);
+const {MORIFAR_DATABASE_PATH:database,MORIFAR_FILE_ROOT:files,MORIFAR_BACKUP_BUCKET:bucket,MORIFAR_BACKUP_ACCOUNT:account,MORIFAR_BACKUP_KMS_ARN:kms}=process.env;
+if(!database||!files||!bucket||!account||!kms||!/^[0-9]{12}$/.test(account)||!/^arn:aws:kms:me-central-1:[0-9]{12}:key\/[a-z0-9-]+$/.test(kms))throw new Error('Configure verified UAE backup account, bucket and KMS key');
+if(kms.split(':')[4]!==account)throw new Error('Backup key must belong to the verified backup account');
+const {Account}=JSON.parse((await exec('/usr/bin/aws',['sts','get-caller-identity','--output','json','--region','me-central-1'])).stdout);if(Account!==account)throw new Error('Backup credentials are not for the verified separate account');
+const location=JSON.parse((await exec('/usr/bin/aws',['s3api','get-bucket-location','--bucket',bucket,'--output','json','--region','me-central-1'])).stdout);if(location.LocationConstraint!=='me-central-1')throw new Error('Backup destination must be UAE me-central-1');
+const root='/var/lib/morifar-backups';await mkdir(root,{recursive:true,mode:0o700});const name=`morifar-${new Date().toISOString().replaceAll(':','-')}.mosb`,output=join(root,name);const result=await createBackup({database,files,output});await exec('/usr/bin/aws',['s3','cp',output,`s3://${bucket}/${name}`,'--region','me-central-1','--sse','aws:kms','--sse-kms-key-id',kms,'--only-show-errors'],{timeout:300000});console.log(JSON.stringify({...result,offsiteUpload:'completed'}));

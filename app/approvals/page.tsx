@@ -1,3 +1,4 @@
+import {requireSession as enforcePageAccess} from "@/features/auth/session";
 import Link from "next/link";
 import {IconChecks,IconShieldCheck} from "@tabler/icons-react";
 import {PageHeader} from "@/components/page-header";
@@ -7,6 +8,8 @@ import {listApprovals} from "@/server/repositories/business-operations";
 import {getApprovalObservation} from "@/server/services/intelligence";
 
 export default async function ApprovalsPage({searchParams}:{searchParams:Promise<{status?:string}>}){
+ await enforcePageAccess();
+
  const {status="all"}=await searchParams,approvals=listApprovals(status);
  return <div className="page">
   <PageHeader eyebrow="APPROVAL SYSTEM" title="Approvals" subtitle="Human decisions for documents, company applications, workflow steps, tasks and comments."/>

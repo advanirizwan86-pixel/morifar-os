@@ -1,0 +1,25 @@
+[Unit]
+Description=Morifar OS dummy-data application
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=morifar
+Group=morifar
+WorkingDirectory=/opt/morifar-os
+Environment=NODE_ENV=production
+Environment=MORIFAR_DATA_MODE=dummy
+Environment=MORIFAR_DATABASE_PATH=/var/lib/morifar/morifar.db
+Environment=MORIFAR_FILE_ROOT=/var/lib/morifar/photos
+Environment=MORIFAR_CLAMSCAN_PATH=/usr/bin/clamscan
+EnvironmentFile=/etc/morifar/runtime.env
+ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000
+Restart=on-failure
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/morifar
+[Install]
+WantedBy=multi-user.target
